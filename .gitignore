@@ -2,4 +2,7 @@
 /Server/NodeJS/package-lock.json
 /Server/WebCrawler/env.json
 /Server/WebCrawler/items
+/Server/Database/node_modules
+/Server/Database/package-lock.json
+/Server/Database/env.json
 .DS_Store
