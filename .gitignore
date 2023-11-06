@@ -1,5 +1,5 @@
-NodeJS/node_modules
-NodeJS/package-lock.json
-WebCrawler/env.json
-WebCrawler/items
+/Server/NodeJS/node_modules
+/Server/NodeJS/package-lock.json
+/Server/WebCrawler/env.json
+/Server/WebCrawler/items
 .DS_Store
