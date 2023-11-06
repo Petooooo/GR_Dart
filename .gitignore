@@ -1,2 +1,4 @@
 NodeJS/node_modules
 NodeJS/package-lock.json
+WebCrawler/env.json
+.DS_Store
