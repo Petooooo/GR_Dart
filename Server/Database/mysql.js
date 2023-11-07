@@ -6,8 +6,8 @@ const envData = JSON.parse(envFile);
 
 const conn = {
     // mysql 접속 설정
-    host: "localhost",
-    port: "3306",
+    host: envData.host,
+    port: envData.port,
     user: envData.user,
     password: envData.pw,
     database: envData.db,
