@@ -23,10 +23,9 @@ app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
-// Item Search API
-// [GET] http://domain:8081/product?keyword=${keyword}&page=${page}&size=${size}
-app.get("/product", (request, response) => {
-    var str = "";
+// Product Search API
+// [GET] http://domain:8081/product/search?keyword=${keyword}&page=${page}&size=${size}
+app.get("/product/search", (request, response) => {
     keyword = request.query.keyword;
     page = request.query.page;
     size = request.query.size;
@@ -52,6 +51,25 @@ app.get("/product", (request, response) => {
                 }
             }
             response.json(JSON.stringify(result));
+        }
+    );
+});
+
+// Product Length API
+// [GET] http://domain:8081/product/length?keyword=${keyword}
+app.get("/product/length", (request, response) => {
+    keyword = request.query.keyword;
+    connection.query(
+        "SELECT COUNT(*) FROM itemTable WHERE keyword = '" + keyword + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var data = new Object();
+            try {
+                data.length = results[0]["COUNT(*)"];
+            } catch (e) {
+                console.log(e);
+            }
+            response.json(JSON.stringify(data));
         }
     );
 });
