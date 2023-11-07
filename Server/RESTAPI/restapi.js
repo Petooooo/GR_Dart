@@ -23,6 +23,7 @@ app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
+// Item Search API
 // [GET] http://domain:8081/product?keyword=${keyword}&page=${page}&size=${size}
 app.get("/product", (request, response) => {
     var str = "";
@@ -33,39 +34,24 @@ app.get("/product", (request, response) => {
         "SELECT * FROM itemTable WHERE keyword = '" + keyword + "'",
         function (error, results, fields) {
             if (error) throw error;
-            for (var i = (page - 1) * size; i < (page - 1) * (size + 1); i++) {
-                var data = new Object();
-                product = results[i];
-                data.id = product.id;
-                data.picThumbnail = product.picThumbnail;
-                data.name = product.name;
-                data.vendor = product.vendor;
-                data.price = product.price;
-                data.reviewer = 0;
-                data.checklists = [0, 0, 0, 0];
-                connection.query(
-                    "SELECT COUNT(*) FROM reviewTable WHERE FK_itemTable = '" + product.id + "'",
-                    function (error, count, fields) {
-                        if (error) throw error;
-                        data.reviewer = count[0]["COUNT(*)"];
-                    }
-                );
-                // console.log(product.id);
-                connection.query(
-                    "SELECT * FROM reviewTable WHERE FK_itemTable = '" + product.id + "'",
-                    function (error, results, fields) {
-                        if (error) throw error;
-                        for (var j = 0; j < data.reviewer; j++) {
-                            console.log(results[j]);
-                            data.checklists[0] += results[j].check_1;
-                            data.checklists[1] += results[j].check_2;
-                            data.checklists[2] += results[j].check_3;
-                            data.checklists[3] += results[j].check_4;
-                        }
-                    }
-                );
-                console.log(data.checklists);
+            var result = new Array();
+            for (var i = 0; i < size; i++) {
+                try {
+                    var data = new Object();
+                    product = results[i + (page - 1) * size];
+                    data.id = product.id;
+                    data.picThumbnail = product.picUrl;
+                    data.name = product.name;
+                    data.vendor = product.vendor;
+                    data.price = product.price;
+                    data.reviewer = product.reviewer;
+                    data.checklists = product.checklists;
+                    result.push(data);
+                } catch (e) {
+                    console.log(e);
+                }
             }
+            response.json(JSON.stringify(result));
         }
     );
 });
