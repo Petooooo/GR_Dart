@@ -29,6 +29,7 @@ CREATE TABLE reviewTable (
   check_2 INT(11) NOT NULL,
   check_3 INT(11) NOT NULL,
   check_4 INT(11) NOT NULL,
+  content VARCHAR(2000) NOT NULL,
   FK_itemTable VARCHAR(11) NOT NULL,
   CONSTRAINT reviewTable_PK PRIMARY KEY(id),
   CONSTRAINT itemTable_FK2 FOREIGN KEY(FK_itemTable) REFERENCES itemTable(id)
