@@ -23,8 +23,9 @@ app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
-// Product Search API
-// [GET] http://domain:8081/product/search?keyword=${keyword}&page=${page}&size=${size}
+// [API]     Product Search API
+// [GET]     http://domain:8081/product/search?keyword=${keyword}&page=${page}&size=${size}
+// [Example] http://localhost:8081/product/search?keyword=종이컵&page=1&size=5
 app.get("/product/search", (request, response) => {
     keyword = request.query.keyword;
     page = request.query.page;
@@ -55,8 +56,9 @@ app.get("/product/search", (request, response) => {
     );
 });
 
-// Product Length API
-// [GET] http://domain:8081/product/length?keyword=${keyword}
+// [API]     Product Length API
+// [GET]     http://domain:8081/product/length?keyword=${keyword}
+// [Example] http://localhost:8081/product/length?keyword=종이컵
 app.get("/product/length", (request, response) => {
     keyword = request.query.keyword;
     connection.query(
@@ -66,6 +68,33 @@ app.get("/product/length", (request, response) => {
             var data = new Object();
             try {
                 data.length = results[0]["COUNT(*)"];
+            } catch (e) {
+                console.log(e);
+            }
+            response.json(JSON.stringify(data));
+        }
+    );
+});
+
+// [API]     Product Detail API
+// [GET]     http://domain:8081/product/detail?id=${id}
+// [Example] http://localhost:8081/product/detail?id=13078030340
+app.get("/product/detail", (request, response) => {
+    id = request.query.id;
+    connection.query(
+        "SELECT * FROM itemTable WHERE id = '" + id + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var data = new Object();
+            try {
+                data.id = results[0].id;
+                data.name = results[0].name;
+                data.vendor = results[0].vendor;
+                data.price = results[0].price;
+                data.deliveryFee = results[0].deliveryFee;
+                data.picUrl = results[0].picUrl;
+                data.originalUrl = results[0].originalUrl;
+                data.checklists = results[0].checklists;
             } catch (e) {
                 console.log(e);
             }
