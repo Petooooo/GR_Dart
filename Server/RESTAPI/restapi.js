@@ -127,6 +127,26 @@ app.get("/product/detail/image", (request, response) => {
     );
 });
 
+// [API]     Product Detail Checklist API
+// [GET]     http://domain:8081/product/detail/checklist?id=${id}
+// [Example] http://localhost:8081/product/detail/checklist?id=13078030340
+app.get("/product/detail/checklist", (request, response) => {
+    id = request.query.id;
+    connection.query(
+        "SELECT checklists FROM itemTable WHERE id = '" + id + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var data = new Object();
+            try {
+                data.checklists = results[0].checklists;
+            } catch (e) {
+                console.log(e);
+            }
+            response.json(JSON.stringify(data));
+        }
+    );
+});
+
 // 404 Error Handler
 app.use(function (req, res, next) {
     res.status(404).send("404 Error: Page Not Found");
