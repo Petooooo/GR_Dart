@@ -8,3 +8,4 @@
 .DS_Store
 /Server/RESTAPI/node_modules
 /Server/RESTAPI/package-lock.json
+/Server/RESTAPI/env.json
