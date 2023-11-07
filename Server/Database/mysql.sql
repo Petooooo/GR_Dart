@@ -7,6 +7,8 @@ CREATE TABLE itemTable(
   price VARCHAR(100) NOT NULL,
   deliveryFee VARCHAR(100) NOT NULL,
   originalUrl VARCHAR(2000) NOT NULL,
+  reviewer VARCHAR(100) NOT NULL,
+  checklists VARCHAR(100) NOT NULL,
   keyword VARCHAR(100) NOT NULL,
   CONSTRAINT itemTable_PK PRIMARY KEY(id)
 );
