@@ -15,5 +15,6 @@ CREATE TABLE detailpicUrlTable (
   id INT(11) NOT NULL AUTO_INCREMENT,
   detailpicUrl VARCHAR(2000) NOT NULL,
   FK_itemTable VARCHAR(11) NOT NULL,
-  CONSTRAINT detailpicUrlTable_PK PRIMARY KEY(id)
+  CONSTRAINT detailpicUrlTable_PK PRIMARY KEY(id),
+  CONSTRAINT itemTable_FK FOREIGN KEY(FK_itemTable) REFERENCES itemTable(id)
 );
