@@ -1,0 +1,19 @@
+CREATE TABLE itemTable(
+  id VARCHAR(11) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  vendor VARCHAR(100) NOT NULL,
+  picUrl VARCHAR(2000) NOT NULL,
+  thumbnailUrl VARCHAR(2000) NOT NULL,
+  price VARCHAR(100) NOT NULL,
+  deliveryFee VARCHAR(100) NOT NULL,
+  originalUrl VARCHAR(2000) NOT NULL,
+  keyword VARCHAR(100) NOT NULL,
+  CONSTRAINT itemTable_PK PRIMARY KEY(id)
+);
+
+CREATE TABLE detailpicUrlTable (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  detailpicUrl VARCHAR(2000) NOT NULL,
+  FK_itemTable VARCHAR(11) NOT NULL,
+  CONSTRAINT detailpicUrlTable_PK PRIMARY KEY(id)
+);
