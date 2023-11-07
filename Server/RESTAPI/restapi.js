@@ -35,7 +35,7 @@ app.get("/product/search", (request, response) => {
         function (error, results, fields) {
             if (error) throw error;
             var result = new Array();
-            for (var i = 0; i < size; i++) {
+            for (var i = 0; i < size && results[i + (page - 1) * size] != undefined; i++) {
                 try {
                     var data = new Object();
                     product = results[i + (page - 1) * size];
@@ -143,6 +143,42 @@ app.get("/product/detail/checklist", (request, response) => {
                 console.log(e);
             }
             response.json(JSON.stringify(data));
+        }
+    );
+});
+
+// [API]     Product Review Content API
+// [GET]     http://domain:8081/product/review/content?id=${id}&page=${page}&size=${size}
+// [Example] http://localhost:8081/product/review/content?id=13078030340&page=1&size=5
+app.get("/product/review/content", (request, response) => {
+    id = request.query.id;
+    page = request.query.page;
+    size = request.query.size;
+    connection.query(
+        "SELECT name, check_1, check_2, check_3, check_4, content FROM reviewTable WHERE FK_itemTable = '" +
+            id +
+            "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var result = new Array();
+            for (var i = 0; i < size && results[i + (page - 1) * size] != undefined; i++) {
+                try {
+                    var data = new Object();
+                    var checklists = new Array();
+                    review = results[i + (page - 1) * size];
+                    data.name = review.name;
+                    data.content = review.content;
+                    checklists.push(review.check_1);
+                    checklists.push(review.check_2);
+                    checklists.push(review.check_3);
+                    checklists.push(review.check_4);
+                    data.checklists = checklists;
+                    result.push(data);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            response.json(JSON.stringify(result));
         }
     );
 });
