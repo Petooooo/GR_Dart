@@ -76,10 +76,10 @@ app.get("/product/length", (request, response) => {
     );
 });
 
-// [API]     Product Detail API
-// [GET]     http://domain:8081/product/detail?id=${id}
-// [Example] http://localhost:8081/product/detail?id=13078030340
-app.get("/product/detail", (request, response) => {
+// [API]     Product Detail Content API
+// [GET]     http://domain:8081/product/detail/content?id=${id}
+// [Example] http://localhost:8081/product/detail/content?id=13078030340
+app.get("/product/detail/content", (request, response) => {
     id = request.query.id;
     connection.query(
         "SELECT * FROM itemTable WHERE id = '" + id + "'",
@@ -98,6 +98,30 @@ app.get("/product/detail", (request, response) => {
             } catch (e) {
                 console.log(e);
             }
+            response.json(JSON.stringify(data));
+        }
+    );
+});
+
+// [API]     Product Detail Image API
+// [GET]     http://domain:8081/product/detail/image?id=${id}
+// [Example] http://localhost:8081/product/detail/image?id=13078030340
+app.get("/product/detail/image", (request, response) => {
+    id = request.query.id;
+    connection.query(
+        "SELECT detailpicUrl FROM detailpicUrlTable WHERE FK_itemTable = '" + id + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var data = new Object();
+            var arr = new Array();
+            try {
+                for (var i = 0; results[i] != undefined; i++) {
+                    arr.push(results[i].detailpicUrl);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+            data.detailpicUrl = arr;
             response.json(JSON.stringify(data));
         }
     );
