@@ -1,6 +1,7 @@
 const fs = require("fs");
 const mysql = require("mysql");
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const envFile = fs.readFileSync("./env.json", "utf8");
 const envData = JSON.parse(envFile);
@@ -19,6 +20,9 @@ const conn = {
 var connection = mysql.createConnection(conn); // Create DB Connection
 connection.connect(); // Connect DB
 
+// Body Parser Middleware
+app.use(bodyParser.json());
+
 app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
@@ -26,6 +30,7 @@ app.get("/", (request, response) => {
 // [API]     Product Search API
 // [GET]     http://domain:8081/product/search?keyword=${keyword}&page=${page}&size=${size}
 // [Example] http://localhost:8081/product/search?keyword=종이컵&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8081/product/search?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
 app.get("/product/search", (request, response) => {
     keyword = request.query.keyword;
     page = request.query.page;
@@ -59,6 +64,7 @@ app.get("/product/search", (request, response) => {
 // [API]     Product Length API
 // [GET]     http://domain:8081/product/length?keyword=${keyword}
 // [Example] http://localhost:8081/product/length?keyword=종이컵
+// [cUrl]    curl -X GET "http://localhost:8081/product/length?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
 app.get("/product/length", (request, response) => {
     keyword = request.query.keyword;
     connection.query(
@@ -79,6 +85,7 @@ app.get("/product/length", (request, response) => {
 // [API]     Product Detail Content API
 // [GET]     http://domain:8081/product/detail/content?id=${id}
 // [Example] http://localhost:8081/product/detail/content?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/product/detail/content?id=13078030340"
 app.get("/product/detail/content", (request, response) => {
     id = request.query.id;
     connection.query(
@@ -106,6 +113,7 @@ app.get("/product/detail/content", (request, response) => {
 // [API]     Product Detail Image API
 // [GET]     http://domain:8081/product/detail/image?id=${id}
 // [Example] http://localhost:8081/product/detail/image?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/product/detail/image?id=13078030340"
 app.get("/product/detail/image", (request, response) => {
     id = request.query.id;
     connection.query(
@@ -130,6 +138,7 @@ app.get("/product/detail/image", (request, response) => {
 // [API]     Product Detail Checklist API
 // [GET]     http://domain:8081/product/detail/checklist?id=${id}
 // [Example] http://localhost:8081/product/detail/checklist?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/product/detail/checklist?id=13078030340"
 app.get("/product/detail/checklist", (request, response) => {
     id = request.query.id;
     connection.query(
@@ -150,6 +159,7 @@ app.get("/product/detail/checklist", (request, response) => {
 // [API]     Product Review Content API
 // [GET]     http://domain:8081/product/review/content?id=${id}&page=${page}&size=${size}
 // [Example] http://localhost:8081/product/review/content?id=13078030340&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8081/product/review/content?id=13078030340&page=1&size=5"
 app.get("/product/review/content", (request, response) => {
     id = request.query.id;
     page = request.query.page;
@@ -181,6 +191,49 @@ app.get("/product/review/content", (request, response) => {
             response.json(JSON.stringify(result));
         }
     );
+});
+
+// [API]     Product Review Write API
+// [POST]    http://domain:8081/product/review/write
+// [Example] http://localhost:8081/product/review/write
+// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","check_1":1,"check_2":1,"check_3":0,"check_4":1,"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8081/product/review/write"
+app.post("/product/review/write", (request, response) => {
+    console.log(request.body);
+    product_id = request.body.id;
+    user_name = request.body.name;
+    user_password = request.body.password;
+    check_1 = request.body.check_1;
+    check_2 = request.body.check_2;
+    check_3 = request.body.check_3;
+    check_4 = request.body.check_4;
+    content = request.body.content;
+    try {
+        connection.query(
+            "INSERT INTO reviewTable(name,password,check_1,check_2,check_3,check_4,content,FK_itemTable) VALUES('" +
+                user_name +
+                "','" +
+                user_password +
+                "','" +
+                check_1 +
+                "','" +
+                check_2 +
+                "','" +
+                check_3 +
+                "','" +
+                check_4 +
+                "','" +
+                content +
+                "','" +
+                product_id +
+                "')",
+            function (error, results, fields) {
+                if (error) throw error;
+                response.send("success");
+            }
+        );
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 // 404 Error Handler
