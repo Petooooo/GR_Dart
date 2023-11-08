@@ -8,3 +8,5 @@
 /Server/RESTAPI/node_modules
 /Server/RESTAPI/package-lock.json
 /Server/RESTAPI/env.json
+/Server/MiddleServer/node_modules
+/Server/MiddleServer/package-lock.json
