@@ -2,7 +2,7 @@ import pymysql
 import json
 import os
 
-with open('../Database/env.json', 'r') as f:
+with open('../RESTAPI/env.json', 'r') as f:
     envData = json.load(f)
 
 try:
@@ -32,7 +32,9 @@ for keyword in os.listdir(path):
             price = "\'" + jsonFile['price'] + "\'"
             deliveryFee = "\'" + jsonFile['deliveryFee'] + "\'"
             originalUrl = "\'" + jsonFile['originalUrl']  + "\'"
-            query1 = "INSERT INTO itemTable(id,name,vendor,picUrl,thumbnailUrl,price,deliveryFee,originalUrl,keyword) VALUES(" + productId + "," + name + "," + vendor + "," + picUrl + "," + thumbnailUrl + "," + price + "," + deliveryFee + "," + originalUrl + ",\'" + keyword + "\');"
+            reviewer = "\'0\'"
+            checklists = "\'[0,0,0,0]\'"
+            query1 = "INSERT INTO itemTable(id,name,vendor,picUrl,thumbnailUrl,price,deliveryFee,originalUrl,reviewer,checklists,keyword) VALUES(" + productId + "," + name + "," + vendor + "," + picUrl + "," + thumbnailUrl + "," + price + "," + deliveryFee + "," + originalUrl + "," + reviewer + "," + checklists + ",\'" + keyword + "\');"
             try:
                 cursor.execute(query1)
             except:
