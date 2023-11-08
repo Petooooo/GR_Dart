@@ -308,13 +308,22 @@ app.put("/product/update", (request, response) => {
 });
 
 // [API]     Delete Review API
-// [DELETE]  http://domain:8081/product/review/delete
-// [Example] http://localhost:8081/product/review/delete
-// [cUrl]    curl -d '{"id":"1","password":"1234"}' -H "Content-Type: application/json" -X DELETE "http://localhost:8081/product/review/delete"
+// [DELETE]  http://domain:8081/product/review/delete?id=${review_id}
+// [Example] http://localhost:8081/product/review/delete?id=1
+// [cUrl]    curl -X DELETE "http://localhost:8081/product/review/delete?id=1"
 app.delete("/product/review/delete", (request, response) => {
-    review_id = request.body.id;
-    password = request.body.password;
-    console.log(reqeust.body);
+    id = request.query.id;
+    try {
+        connection.query(
+            "DELETE FROM reviewTable WHERE id = " + id,
+            function (error, results, fields) {
+                if (error) throw error;
+                response.send("success");
+            }
+        );
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 // 404 Error Handler
