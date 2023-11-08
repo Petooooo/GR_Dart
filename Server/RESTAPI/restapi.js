@@ -82,6 +82,27 @@ app.get("/product/length", (request, response) => {
     );
 });
 
+// [API]     Product Keywords API
+// [GET]     http://domain:8081/product/keywords
+// [Example] http://localhost:8081/product/keywords
+// [cUrl]    curl -X GET "http://localhost:8081/product/keywords"
+app.get("/product/keywords", (request, response) => {
+    connection.query("SELECT DISTINCT keyword FROM itemTable", function (error, results, fields) {
+        if (error) throw error;
+        var data = new Object();
+        var arr = new Array();
+        try {
+            for (var i = 0; results[i] != undefined; i++) {
+                arr.push(results[i].keyword);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+        data.keywords = arr;
+        response.json(JSON.stringify(data));
+    });
+});
+
 // [API]     Product Detail Content API
 // [GET]     http://domain:8081/product/detail/content?id=${id}
 // [Example] http://localhost:8081/product/detail/content?id=13078030340
