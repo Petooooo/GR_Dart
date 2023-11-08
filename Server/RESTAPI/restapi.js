@@ -165,7 +165,7 @@ app.get("/product/review/content", (request, response) => {
     page = request.query.page;
     size = request.query.size;
     connection.query(
-        "SELECT name, check_1, check_2, check_3, check_4, content FROM reviewTable WHERE FK_itemTable = '" +
+        "SELECT id, name, check_1, check_2, check_3, check_4, content FROM reviewTable WHERE FK_itemTable = '" +
             id +
             "'",
         function (error, results, fields) {
@@ -176,6 +176,7 @@ app.get("/product/review/content", (request, response) => {
                     var data = new Object();
                     var checklists = new Array();
                     review = results[i + (page - 1) * size];
+                    data.review_id = review.id;
                     data.name = review.name;
                     data.content = review.content;
                     checklists.push(review.check_1);
