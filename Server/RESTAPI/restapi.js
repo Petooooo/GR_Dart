@@ -236,48 +236,6 @@ app.post("/product/review/write", (request, response) => {
     }
 });
 
-// [API]     Product Review Write API
-// [POST]    http://domain:8081/product/review/write
-// [Example] http://localhost:8081/product/review/write
-// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","check_1":1,"check_2":1,"check_3":0,"check_4":1,"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8081/product/review/write"
-app.post("/product/review/write", (request, response) => {
-    product_id = request.body.id;
-    user_name = request.body.name;
-    user_password = request.body.password;
-    check_1 = request.body.check_1;
-    check_2 = request.body.check_2;
-    check_3 = request.body.check_3;
-    check_4 = request.body.check_4;
-    content = request.body.content;
-    try {
-        connection.query(
-            "INSERT INTO reviewTable(name,password,check_1,check_2,check_3,check_4,content,FK_itemTable) VALUES('" +
-                user_name +
-                "','" +
-                user_password +
-                "','" +
-                check_1 +
-                "','" +
-                check_2 +
-                "','" +
-                check_3 +
-                "','" +
-                check_4 +
-                "','" +
-                content +
-                "','" +
-                product_id +
-                "')",
-            function (error, results, fields) {
-                if (error) throw error;
-                response.send("success");
-            }
-        );
-    } catch (e) {
-        console.log(e);
-    }
-});
-
 // [API]     Update Product Item Table API
 // [PUT]     http://domain:8081/product/update
 // [Example] http://localhost:8081/product/update
