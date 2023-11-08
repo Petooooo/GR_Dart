@@ -5,3 +5,6 @@
 /Server/Database/package-lock.json
 /Server/Database/env.json
 .DS_Store
+/Server/RESTAPI/node_modules
+/Server/RESTAPI/package-lock.json
+/Server/RESTAPI/env.json
