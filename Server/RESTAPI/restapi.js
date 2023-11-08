@@ -198,7 +198,6 @@ app.get("/product/review/content", (request, response) => {
 // [Example] http://localhost:8081/product/review/write
 // [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","check_1":1,"check_2":1,"check_3":0,"check_4":1,"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8081/product/review/write"
 app.post("/product/review/write", (request, response) => {
-    console.log(request.body);
     product_id = request.body.id;
     user_name = request.body.name;
     user_password = request.body.password;
