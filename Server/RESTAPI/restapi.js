@@ -278,10 +278,10 @@ app.post("/product/review/write", (request, response) => {
 });
 
 // [API]     Update Product Item Table API
-// [POST]    http://domain:8081/product/update
+// [PUT]     http://domain:8081/product/update
 // [Example] http://localhost:8081/product/update
-// [cUrl]    curl -d '{"id":"13078030340","check_1":3,"check_2":2,"check_3":1,"check_4":5,"reviewer":21}' -H "Content-Type: application/json" -X POST "http://localhost:8081/product/update"
-app.post("/product/update", (request, response) => {
+// [cUrl]    curl -d '{"id":"13078030340","check_1":3,"check_2":2,"check_3":1,"check_4":5,"reviewer":14}' -H "Content-Type: application/json" -X PUT "http://localhost:8081/product/update"
+app.put("/product/update", (request, response) => {
     product_id = request.body.id;
     var checklists = new Array();
     checklists.push(request.body.check_1);
@@ -305,6 +305,16 @@ app.post("/product/update", (request, response) => {
     } catch (e) {
         console.log(e);
     }
+});
+
+// [API]     Delete Review API
+// [DELETE]  http://domain:8081/product/review/delete
+// [Example] http://localhost:8081/product/review/delete
+// [cUrl]    curl -d '{"id":"1","password":"1234"}' -H "Content-Type: application/json" -X DELETE "http://localhost:8081/product/review/delete"
+app.delete("/product/review/delete", (request, response) => {
+    review_id = request.body.id;
+    password = request.body.password;
+    console.log(reqeust.body);
 });
 
 // 404 Error Handler
