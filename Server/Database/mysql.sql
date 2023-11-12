@@ -1,3 +1,5 @@
+CREATE DATABASE productInfo;
+USE productInfo;
 CREATE TABLE itemTable(
   id VARCHAR(11) NOT NULL,
   name VARCHAR(100) NOT NULL,
