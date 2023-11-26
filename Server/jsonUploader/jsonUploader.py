@@ -2,7 +2,7 @@ import pymysql
 import json
 import os
 
-with open('../RESTAPI/env.json', 'r') as f:
+with open('./env.json', 'r') as f:
     envData = json.load(f)
 
 try:
