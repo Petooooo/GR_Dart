@@ -1,5 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const request = require("request");
+
+const envFile = fs.readFileSync("./env.json", "utf8");
+const envData = JSON.parse(envFile);
 
 const app = express();
 const portnum = 8081;

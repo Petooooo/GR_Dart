@@ -9,5 +9,6 @@
 /Server/DatabaseServer/env.json
 /Server/FacadeServer/node_modules
 /Server/FacadeServer/package-lock.json
+/Server/FacadeServer/env.json
 /Server/ConversionServer/node_modules
 /Server/ConversionServer/package-lock.json
