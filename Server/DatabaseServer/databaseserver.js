@@ -28,10 +28,10 @@ app.get("/", (request, response) => {
 });
 
 // [API]     Product Search API
-// [GET]     http://domain:8081/product/search?keyword=${keyword}&page=${page}&size=${size}
-// [Example] http://localhost:8081/product/search?keyword=종이컵&page=1&size=5
-// [cUrl]    curl -X GET "http://localhost:8081/product/search?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
-app.get("/product/search", (request, response) => {
+// [GET]     http://dbserver:8081/search?keyword=${keyword}&page=${page}&size=${size}
+// [Example] http://localhost:8081/search?keyword=종이컵&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8081/search?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
+app.get("/search", (request, response) => {
     keyword = request.query.keyword;
     page = request.query.page;
     size = request.query.size;
@@ -62,10 +62,10 @@ app.get("/product/search", (request, response) => {
 });
 
 // [API]     Product Length API
-// [GET]     http://domain:8081/product/length?keyword=${keyword}
-// [Example] http://localhost:8081/product/length?keyword=종이컵
-// [cUrl]    curl -X GET "http://localhost:8081/product/length?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
-app.get("/product/length", (request, response) => {
+// [GET]     http://dbserver:8081/length?keyword=${keyword}
+// [Example] http://localhost:8081/length?keyword=종이컵
+// [cUrl]    curl -X GET "http://localhost:8081/length?keyword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
+app.get("/length", (request, response) => {
     keyword = request.query.keyword;
     connection.query(
         "SELECT COUNT(*) FROM itemTable WHERE keyword = '" + keyword + "'",
@@ -83,10 +83,10 @@ app.get("/product/length", (request, response) => {
 });
 
 // [API]     Product Keywords API
-// [GET]     http://domain:8081/product/keywords
-// [Example] http://localhost:8081/product/keywords
-// [cUrl]    curl -X GET "http://localhost:8081/product/keywords"
-app.get("/product/keywords", (request, response) => {
+// [GET]     http://dbserver:8081/keywords
+// [Example] http://localhost:8081/keywords
+// [cUrl]    curl -X GET "http://localhost:8081/keywords"
+app.get("/keywords", (request, response) => {
     connection.query("SELECT DISTINCT keyword FROM itemTable", function (error, results, fields) {
         if (error) throw error;
         var data = new Object();
@@ -104,10 +104,10 @@ app.get("/product/keywords", (request, response) => {
 });
 
 // [API]     Product Detail Content API
-// [GET]     http://domain:8081/product/detail/content?id=${id}
-// [Example] http://localhost:8081/product/detail/content?id=13078030340
-// [cUrl]    curl -X GET "http://localhost:8081/product/detail/content?id=13078030340"
-app.get("/product/detail/content", (request, response) => {
+// [GET]     http://dbserver:8081/detail/content?id=${id}
+// [Example] http://localhost:8081/detail/content?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/detail/content?id=13078030340"
+app.get("/detail/content", (request, response) => {
     id = request.query.id;
     connection.query(
         "SELECT * FROM itemTable WHERE id = '" + id + "'",
@@ -132,10 +132,10 @@ app.get("/product/detail/content", (request, response) => {
 });
 
 // [API]     Product Detail Image API
-// [GET]     http://domain:8081/product/detail/image?id=${id}
-// [Example] http://localhost:8081/product/detail/image?id=13078030340
-// [cUrl]    curl -X GET "http://localhost:8081/product/detail/image?id=13078030340"
-app.get("/product/detail/image", (request, response) => {
+// [GET]     http://dbserver:8081/detail/image?id=${id}
+// [Example] http://localhost:8081/detail/image?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/detail/image?id=13078030340"
+app.get("/detail/image", (request, response) => {
     id = request.query.id;
     connection.query(
         "SELECT detailpicUrl FROM detailpicUrlTable WHERE FK_itemTable = '" + id + "'",
@@ -156,32 +156,11 @@ app.get("/product/detail/image", (request, response) => {
     );
 });
 
-// [API]     Product Detail Checklist API
-// [GET]     http://domain:8081/product/detail/checklist?id=${id}
-// [Example] http://localhost:8081/product/detail/checklist?id=13078030340
-// [cUrl]    curl -X GET "http://localhost:8081/product/detail/checklist?id=13078030340"
-app.get("/product/detail/checklist", (request, response) => {
-    id = request.query.id;
-    connection.query(
-        "SELECT checklists FROM itemTable WHERE id = '" + id + "'",
-        function (error, results, fields) {
-            if (error) throw error;
-            var data = new Object();
-            try {
-                data.checklists = results[0].checklists;
-            } catch (e) {
-                console.log(e);
-            }
-            response.json(JSON.stringify(data));
-        }
-    );
-});
-
 // [API]     Product Review Content API
-// [GET]     http://domain:8081/product/review/content?id=${id}&page=${page}&size=${size}
-// [Example] http://localhost:8081/product/review/content?id=13078030340&page=1&size=5
-// [cUrl]    curl -X GET "http://localhost:8081/product/review/content?id=13078030340&page=1&size=5"
-app.get("/product/review/content", (request, response) => {
+// [GET]     http://dbserver:8081/review/content?id=${id}&page=${page}&size=${size}
+// [Example] http://localhost:8081/review/content?id=13078030340&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8081/review/content?id=13078030340&page=1&size=5"
+app.get("/review/content", (request, response) => {
     id = request.query.id;
     page = request.query.page;
     size = request.query.size;
@@ -216,10 +195,10 @@ app.get("/product/review/content", (request, response) => {
 });
 
 // [API]     Product Review Write API
-// [POST]    http://domain:8081/product/review/write
-// [Example] http://localhost:8081/product/review/write
-// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","check_1":1,"check_2":1,"check_3":0,"check_4":1,"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8081/product/review/write"
-app.post("/product/review/write", (request, response) => {
+// [POST]    http://dbserver:8081/review/write
+// [Example] http://localhost:8081/review/write
+// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","check_1":1,"check_2":1,"check_3":0,"check_4":1,"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8081/review/write"
+app.post("/review/write", (request, response) => {
     product_id = request.body.id;
     user_name = request.body.name;
     user_password = request.body.password;
@@ -258,10 +237,10 @@ app.post("/product/review/write", (request, response) => {
 });
 
 // [API]     Update Product Item Table API
-// [PUT]     http://domain:8081/product/update
-// [Example] http://localhost:8081/product/update
-// [cUrl]    curl -d '{"id":"13078030340","check_1":3,"check_2":2,"check_3":1,"check_4":5,"reviewer":14}' -H "Content-Type: application/json" -X PUT "http://localhost:8081/product/update"
-app.put("/product/update", (request, response) => {
+// [PUT]     http://dbserver:8081/update
+// [Example] http://localhost:8081/update
+// [cUrl]    curl -d '{"id":"13078030340","check_1":3,"check_2":2,"check_3":1,"check_4":5,"reviewer":14}' -H "Content-Type: application/json" -X PUT "http://localhost:8081/update"
+app.put("/update", (request, response) => {
     product_id = request.body.id;
     var checklists = new Array();
     checklists.push(request.body.check_1);
@@ -288,10 +267,10 @@ app.put("/product/update", (request, response) => {
 });
 
 // [API]     Delete Review API
-// [DELETE]  http://domain:8081/product/review/delete?id=${review_id}
-// [Example] http://localhost:8081/product/review/delete?id=1
-// [cUrl]    curl -X DELETE "http://localhost:8081/product/review/delete?id=1"
-app.delete("/product/review/delete", (request, response) => {
+// [DELETE]  http://dbserver:8081/review/delete?id=${review_id}
+// [Example] http://localhost:8081/review/delete?id=1
+// [cUrl]    curl -X DELETE "http://localhost:8081/review/delete?id=1"
+app.delete("/review/delete", (request, response) => {
     id = request.query.id;
     try {
         connection.query(
