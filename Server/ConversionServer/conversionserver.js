@@ -9,17 +9,109 @@ const envData = JSON.parse(envFile);
 const app = express();
 const portnum = 8082;
 
+// Function to calculate the Levenshtein distance between two strings
+function levenshteinDistance(str1, str2) {
+    const m = str1.length;
+    const n = str2.length;
+
+    // Handling empty strings
+    if (m === 0) return n;
+    if (n === 0) return m;
+
+    // Initializing a 2D array
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    // Setting initial values
+    for (let i = 0; i <= m; i++) {
+        dp[i][0] = i;
+    }
+    for (let j = 0; j <= n; j++) {
+        dp[0][j] = j;
+    }
+
+    // Calculating the edit distance
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+            dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+        }
+    }
+    return dp[m][n];
+}
+
+// Function to find the most similar keyword to a search word in a list of keywords
+function getKeyword(searchword, keywords) {
+    var keyword = "";
+    var maxSimilarity = 0;
+    for (let i = 0; i < keywords.length; i++) {
+        // Calculating Levenshtein distance
+        const distance = levenshteinDistance(searchword, keywords[i]);
+        // Calculating the length of the longer string
+        const maxLength = Math.max(searchword.length, keywords[i].length);
+        // Calculating similarity
+        const similarity = 1 - distance / maxLength;
+        if (similarity > maxSimilarity) {
+            keyword = keywords[i];
+            maxSimilarity = similarity;
+        }
+    }
+    return keyword;
+}
+
 // Body Parser Middleware
 app.use(bodyParser.json());
 
-app.get("/", (request, response) => {
+app.get("/", (req, res) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
+// [API]     Product Search API
+// [GET]     http://conversionserver:8082/search?searchword=${searchword}&page=${page}&size=${size}
+// [Example] http://localhost:8082/search?searchword=종이컵&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8082/search?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
+app.get("/search", (req, res) => {
+    searchword = req.query.searchword;
+    page = req.query.page;
+    size = req.query.size;
+    keywordURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/keywords"
+    );
+    request.get(
+        {
+            url: keywordURL,
+            method: "GET",
+        },
+        function (error, response, body) {
+            keyword = getKeyword(searchword, JSON.parse(JSON.parse(body)).keywords);
+            searchURL = encodeURI(
+                "http://" +
+                    envData.dbserver_host +
+                    ":" +
+                    envData.dbserver_port +
+                    "/search?keyword=" +
+                    keyword +
+                    "&page=" +
+                    page +
+                    "&size=" +
+                    size
+            );
+            request.get(
+                {
+                    url: searchURL,
+                    method: "GET",
+                },
+                function (error, response, body) {
+                    res.send(JSON.parse(body));
+                }
+            );
+        }
+    );
+});
+
 // [API]     Review Content API
-// [GET]     http://facadeserver:8080/review/content?id=${id}&page=${page}&size=${size}
-// [Example] http://localhost:8080/review/content?id=13078030340&page=1&size=5
-// [cUrl]    curl -X GET "http://localhost:8080/review/content?id=13078030340&page=1&size=5"
+// [GET]     http://facadeserver:8082/review/content?id=${id}&page=${page}&size=${size}
+// [Example] http://localhost:8082/review/content?id=13078030340&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8082/review/content?id=13078030340&page=1&size=5"
 app.get("/review/content", (req, res) => {
     request.get(
         {
@@ -34,27 +126,6 @@ app.get("/review/content", (req, res) => {
                 req.query.page +
                 "&size=" +
                 req.query.size,
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
-});
-
-// [API]     Review Delete API
-// [DELETE]  http://facadeserver:8080/review/delete?id=${review_id}
-// [Example] http://localhost:8080/review/delete?id=1
-// [cUrl]    curl -X DELETE "http://localhost:8080/review/delete?id=1"
-app.delete("/review/delete", (req, res) => {
-    request.delete(
-        {
-            url:
-                "http://" +
-                envData.dbserver_host +
-                ":" +
-                envData.dbserver_port +
-                "/review/delete?id=" +
-                req.query.id,
         },
         function (error, response, body) {
             res.send(body);
