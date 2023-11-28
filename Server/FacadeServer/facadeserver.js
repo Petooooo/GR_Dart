@@ -41,6 +41,38 @@ app.get("/review/content", (req, res) => {
     );
 });
 
+// [API]     Product Review Write API
+// [POST]    http://facadeserver:8080/review/write
+// [Example] http://localhost:8080/review/write
+// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","checklists": [1, 1, 0, 1],"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8080/review/write"
+app.post("/review/write", (req, res) => {
+    product_id = req.body.id;
+    user_name = req.body.name;
+    user_password = req.body.password;
+    checklists = req.body.checklists;
+    content = req.body.content;
+    reviewWriteURL = encodeURI(
+        "http://" + envData.convserver_host + ":" + envData.convserver_port + "/review/write"
+    );
+    request.post(
+        {
+            uri: reviewWriteURL,
+            method: "POST",
+            body: {
+                id: product_id,
+                name: user_name,
+                password: user_password,
+                checklists: checklists,
+                content: content,
+            },
+            json: true,
+        },
+        function (error, response, body) {
+            res.send(body);
+        }
+    );
+});
+
 // [API]     Review Delete API
 // [DELETE]  http://facadeserver:8080/review/delete?id=${review_id}
 // [Example] http://localhost:8080/review/delete?id=1
