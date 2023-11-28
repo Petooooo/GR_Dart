@@ -58,7 +58,7 @@
 
 -   Response
 
-```json
+```
 {
     "length": 11
 }

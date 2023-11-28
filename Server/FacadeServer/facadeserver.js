@@ -152,19 +152,21 @@ app.post("/review/write", (req, res) => {
 });
 
 // [API]     Review Delete API
-// [DELETE]  http://facadeserver:8080/review/delete?id=${review_id}
-// [Example] http://localhost:8080/review/delete?id=1
-// [cUrl]    curl -X DELETE "http://localhost:8080/review/delete?id=1"
+// [DELETE]  http://facadeserver:8080/review/delete?id=${review_id}&password=${password}
+// [Example] http://localhost:8080/review/delete?id=1&password=1234
+// [cUrl]    curl -X DELETE "http://localhost:8080/review/delete?id=1&password=1234"
 app.delete("/review/delete", (req, res) => {
     request.delete(
         {
             url:
                 "http://" +
-                envData.dbserver_host +
+                envData.convserver_host +
                 ":" +
-                envData.dbserver_port +
+                envData.convserver_port +
                 "/review/delete?id=" +
-                req.query.id,
+                req.query.id +
+                "&password=" +
+                req.query.password,
             method: "DELETE",
         },
         function (error, response, body) {

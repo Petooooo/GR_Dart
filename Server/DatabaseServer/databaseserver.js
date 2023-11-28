@@ -306,6 +306,21 @@ app.delete("/review/delete", (request, response) => {
     }
 });
 
+// [API]     Product Review Password API
+// [GET]     http://dbserver:8081/review/password?id=${review_id}
+// [Example] http://localhost:8081/review/password?id=20
+// [cUrl]    curl -X GET "http://localhost:8081/review/password?id=20"
+app.get("/review/password", (request, response) => {
+    id = request.query.id;
+    connection.query(
+        "SELECT password FROM reviewTable WHERE id = '" + id + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            response.json(JSON.stringify(results[0]));
+        }
+    );
+});
+
 // 404 Error Handler
 app.use(function (req, res, next) {
     res.status(404).send("404 Error: Page Not Found");

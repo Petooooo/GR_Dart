@@ -259,6 +259,51 @@ app.post("/review/write", (req, res) => {
     );
 });
 
+// [API]     Review Delete API
+// [DELETE]  http://conversionserver:8082/review/delete?id=${review_id}&password=${password}
+// [Example] http://localhost:8082/review/delete?id=1&password=123
+// [cUrl]    curl -X DELETE "http://localhost:8082/review/delete?id=1&password=1234"
+app.delete("/review/delete", (req, res) => {
+    review_id = req.query.id;
+    password = req.query.password;
+    reviewPasswordURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/review/password?id=" +
+            review_id
+    );
+    reviewDeleteURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/review/delete?id=" +
+            review_id
+    );
+    request.get(
+        {
+            url: reviewPasswordURL,
+            method: "GET",
+        },
+        function (error1, response1, body1) {
+            if (password == JSON.parse(JSON.parse(body1)).password) {
+                request.delete(
+                    {
+                        url: reviewDeleteURL,
+                    },
+                    function (error2, response2, body2) {
+                        res.send(body2);
+                    }
+                );
+            } else {
+                res.send("WrongPassword");
+            }
+        }
+    );
+});
+
 // 404 Error Handler
 app.use(function (req, res, next) {
     res.status(404).send("404 Error: Page Not Found");
