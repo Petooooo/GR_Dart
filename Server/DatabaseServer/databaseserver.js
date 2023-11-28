@@ -167,7 +167,6 @@ app.get("/review/length", (request, response) => {
         function (error, results, fields) {
             if (error) throw error;
             var data = new Object();
-            console.log(results);
             try {
                 data.length = results[0]["COUNT(*)"];
             } catch (e) {
