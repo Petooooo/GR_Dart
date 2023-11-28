@@ -60,7 +60,7 @@
 
 ```
 {
-    "length": 11
+    length: 11
 }
 ```
 
@@ -172,7 +172,7 @@
 success
 ```
 
-#### 3) Review Delete API [GET]
+#### 3) Review Delete API [DELETE]
 
 <aside>
 📌 http://facadeserver:8080/review/delete?id=${review_id}&password=${password}
@@ -197,6 +197,159 @@ WrongPassword
 ```
 
 ## 2. Conversion Server
+
+#### 1) Product Search API [GET]
+
+<aside>
+📌 http://conversionserver:8082/search?searchword=${searchword}&page=${page}&size=${size}
+
+</aside>
+
+-   Request
+
+```
+- 검색어
+- 0부터 시작하는 페이지 번호
+- 페이지 크기
+```
+
+-   Response
+
+```
+[
+    {
+        id: '13078',
+        picUrl: 'http://image1.jpg',
+        name: ' 친환경 종이컵 10온스',
+        vendor: 'CafenTea',
+        price: '4950',
+        reviewer: '12',
+        warningState: 2
+    },
+    {
+        id: '52048',
+        picUrl: 'http://image2.jpg',
+        name: ' 샴풍 일회용컵',
+        vendor: 'CafenTea',
+        price: '4950',
+    ...
+```
+
+#### 2) Product Search Length API [GET]
+
+<aside>
+📌 http://conversionserver:8082/search/length?searchword=${searchword}
+
+</aside>
+
+-   Request
+
+```
+- 검색어
+```
+
+-   Response
+
+```
+{
+    length: 11
+}
+```
+
+#### 3) Product Detail API [GET]
+
+<aside>
+📌  http://conversionserver:8082/detail?id=${product_id}
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+```
+
+-   Response
+
+```
+{
+    id: '13078',
+    picUrl: 'http://image1.jpg',
+    name: ' 친환경 종이컵 10온스',
+    vendor: 'CafenTea',
+    price: '4950',
+    deliveryFee: '3000',
+    originalUrl: 'http://shop.com',
+    reviewer: '12',
+    checklists: '[3,2,7,0]',
+    detailpicUrl: [
+        'http://image1.jpg',
+        'http://image2.jpg',
+        'http://image3.jpg',
+        ...
+    ]
+}
+
+```
+
+### 2. Review Info
+
+#### 1) Product Review Write API [POST]
+
+<aside>
+📌 http://conversionserver:8082/review/write
+
+```
+{
+    id: ${product_id},
+    name: ${name},
+    password: ${password},
+    checklists: ${checklists},
+    content: ${content}
+}
+```
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+- 리뷰 작성자명
+- 리뷰 작성시 비밀번호
+- 체크리스트
+- 리뷰 내용
+```
+
+-   Response
+
+```
+success
+```
+
+#### 2) Product Review Delete API [DELETE]
+
+<aside>
+📌 http://conversionserver:8082/review/delete?id=${review_id}&password=${password}
+
+</aside>
+
+-   Request
+
+```
+- 리뷰 id
+- 리뷰 작성시 비밀번호
+```
+
+-   Response
+
+```
+success
+```
+
+```
+WrongPassword
+```
 
 ## 3. Database Server
 
