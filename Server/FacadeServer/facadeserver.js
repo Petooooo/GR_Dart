@@ -67,24 +67,23 @@ app.get("/detail", (req, res) => {
     );
 });
 
-// [API]     Review Content API
-// [GET]     http://facadeserver:8080/review/content?id=${id}&page=${page}&size=${size}
-// [Example] http://localhost:8080/review/content?id=13078030340&page=1&size=5
-// [cUrl]    curl -X GET "http://localhost:8080/review/content?id=13078030340&page=1&size=5"
-app.get("/review/content", (req, res) => {
+// [API]     Search Length API
+// [GET]     http://facadeserver:8080/search/length?searchword=${searchword}
+// [Example] http://localhost:8080/search/length?searchword=종이컵
+// [cUrl]    curl -X GET "http://localhost:8080/search/length?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
+app.get("/search/length", (req, res) => {
+    searchword = req.query.searchword;
+    lengthURL = encodeURI(
+        "http://" +
+            envData.convserver_host +
+            ":" +
+            envData.convserver_port +
+            "/search/length?searchword=" +
+            req.query.searchword
+    );
     request.get(
         {
-            url:
-                "http://" +
-                envData.dbserver_host +
-                ":" +
-                envData.dbserver_port +
-                "/review/content?id=" +
-                req.query.id +
-                "&page=" +
-                req.query.page +
-                "&size=" +
-                req.query.size,
+            url: lengthURL,
             method: "GET",
         },
         function (error, response, body) {

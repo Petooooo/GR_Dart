@@ -304,6 +304,45 @@ app.delete("/review/delete", (req, res) => {
     );
 });
 
+// [API]     Search Length API
+// [GET]     http://facadeserver:8082/search/length?searchword=${searchword}
+// [Example] http://localhost:8082/search/length?searchword=종이컵
+// [cUrl]    curl -X GET "http://localhost:8082/search/length?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
+app.get("/search/length", (req, res) => {
+    searchword = req.query.searchword;
+    keywordURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/keywords"
+    );
+    request.get(
+        {
+            url: keywordURL,
+            method: "GET",
+        },
+        function (error1, response1, body1) {
+            trans = new Transformer(searchword, JSON.parse(JSON.parse(body1)).keywords);
+            trans.transKeyword();
+            keyword = trans.getKeyword();
+            lengthURL = encodeURI(
+                "http://" +
+                    envData.dbserver_host +
+                    ":" +
+                    envData.dbserver_port +
+                    "/length?keyword=" +
+                    keyword
+            );
+            request.get(
+                {
+                    url: lengthURL,
+                    method: "GET",
+                },
+                function (error2, response2, body2) {
+                    res.send(JSON.parse(body2));
+                }
+            );
+        }
+    );
+});
+
 // 404 Error Handler
 app.use(function (req, res, next) {
     res.status(404).send("404 Error: Page Not Found");
