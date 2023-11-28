@@ -145,6 +145,104 @@ app.get("/detail", (req, res) => {
     );
 });
 
+// [API]     Product Review Write API
+// [POST]    http://conversionserver:8082/review/write
+// [Example] http://localhost:8082/review/write
+// [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","checklists": [1, 1, 0, 1],"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8082/review/write"
+app.post("/review/write", (req, res) => {
+    product_id = req.body.id;
+    user_name = req.body.name;
+    user_password = req.body.password;
+    check_1 = req.body.checklists[0];
+    check_2 = req.body.checklists[1];
+    check_3 = req.body.checklists[2];
+    check_4 = req.body.checklists[3];
+    content = req.body.content;
+    detailURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/detail/content?id=" +
+            product_id
+    );
+    reviewWriteURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/review/write"
+    );
+    reviewLengthURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/review/length?id=" +
+            product_id
+    );
+    updateURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/update"
+    );
+    request.get(
+        {
+            url: detailURL,
+            method: "GET",
+        },
+        function (error1, response1, body1) {
+            old_checklists = JSON.parse(JSON.parse(JSON.parse(body1)).checklists);
+            new_checklists = [
+                old_checklists[0] + check_1,
+                old_checklists[1] + check_2,
+                old_checklists[2] + check_3,
+                old_checklists[3] + check_4,
+            ];
+            request.post(
+                {
+                    uri: reviewWriteURL,
+                    method: "POST",
+                    body: {
+                        id: product_id,
+                        name: user_name,
+                        password: user_password,
+                        check_1: check_1,
+                        check_2: check_2,
+                        check_3: check_3,
+                        check_4: check_4,
+                        content: content,
+                    },
+                    json: true,
+                },
+                function (error2, response2, body2) {
+                    request.get(
+                        {
+                            url: reviewLengthURL,
+                            method: "GET",
+                        },
+                        function (error3, response3, body3) {
+                            new_length = JSON.parse(JSON.parse(body3)).length;
+                            request.put(
+                                {
+                                    uri: updateURL,
+                                    method: "PUT",
+                                    body: {
+                                        id: product_id,
+                                        check_1: new_checklists[0],
+                                        check_2: new_checklists[1],
+                                        check_3: new_checklists[2],
+                                        check_4: new_checklists[3],
+                                        reviewer: new_length,
+                                    },
+                                    json: true,
+                                },
+                                function (error2, response4, body4) {
+                                    res.send("sucess");
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        }
+    );
+});
+
 // 404 Error Handler
 app.use(function (req, res, next) {
     res.status(404).send("404 Error: Page Not Found");
