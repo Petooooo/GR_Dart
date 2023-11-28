@@ -50,13 +50,13 @@
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 검색어
 ```
 
--   반환
+-   Response
 
 ```json
 {
@@ -71,13 +71,13 @@
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 id
 ```
 
--   반환
+-   Response
 
 ```json
 {
@@ -109,7 +109,7 @@
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 id
@@ -117,7 +117,7 @@
 - 리뷰 페이지 크기
 ```
 
--   반환
+-   Response
 
 ```json
 [
@@ -156,7 +156,7 @@
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 id
@@ -166,7 +166,7 @@
 - 리뷰 내용
 ```
 
--   반환
+-   Response
 
 ```
 success
@@ -179,14 +179,14 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 리뷰 id
 - 리뷰 작성시 비밀번호
 ```
 
--   반환
+-   Response
 
 ```
 success
@@ -196,13 +196,13 @@ success
 
 ## 3. Database Server
 
--   요청
+-   Request
 
 ```
 - 상품 번호
 ```
 
--   반환
+-   Response
 
 ```json
 {
@@ -234,13 +234,13 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 번호
 ```
 
--   반환
+-   Response
 
 ```json
 {
@@ -278,7 +278,7 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 번호
@@ -286,7 +286,7 @@ success
 - 페이지 크기
 ```
 
--   반환
+-   Response
 
 ```json
 [
@@ -305,7 +305,7 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 번호 (**productId** : Int)
@@ -314,7 +314,7 @@ success
 - 체크리스트 해당 여부 <- [1, 2 ...] (**checkTypes** : List<Int>)
 ```
 
--   반환
+-   Response
 
 ```json
 { "id": 1 }
@@ -327,13 +327,13 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 닉네임 (**nickname** : String) (나중에 교체)
 ```
 
--   반환
+-   Response
 
 ```json
 { "id": 1 }
@@ -348,13 +348,13 @@ success
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 상품 ID
 ```
 
--   반환
+-   Response
 
 ```json
 [
