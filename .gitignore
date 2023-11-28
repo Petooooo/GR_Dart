@@ -12,3 +12,4 @@
 /Server/FacadeServer/env.json
 /Server/ConversionServer/node_modules
 /Server/ConversionServer/package-lock.json
+/Server/ConversionServer/env.json
