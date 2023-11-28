@@ -16,6 +16,26 @@ app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
+// [API]     Detail API
+// [GET]     http://facadeserver:8080/detail?id=${id}
+// [Example] http://localhost:8080/detail?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8080/detail?id=13078030340"
+app.get("/detail", (req, res) => {
+    id = req.query.id;
+    detailURL = encodeURI(
+        "http://" + envData.convserver_host + ":" + envData.convserver_port + "/detail?id=" + id
+    );
+    request.get(
+        {
+            url: detailURL,
+            method: "GET",
+        },
+        function (error, response, body) {
+            res.send(body);
+        }
+    );
+});
+
 // [API]     Review Content API
 // [GET]     http://facadeserver:8080/review/content?id=${id}&page=${page}&size=${size}
 // [Example] http://localhost:8080/review/content?id=13078030340&page=1&size=5
@@ -34,6 +54,7 @@ app.get("/review/content", (req, res) => {
                 req.query.page +
                 "&size=" +
                 req.query.size,
+            method: "GET",
         },
         function (error, response, body) {
             res.send(body);
@@ -41,7 +62,33 @@ app.get("/review/content", (req, res) => {
     );
 });
 
-// [API]     Product Review Write API
+// [API]     Review Content API
+// [GET]     http://facadeserver:8080/review/content?id=${id}&page=${page}&size=${size}
+// [Example] http://localhost:8080/review/content?id=13078030340&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8080/review/content?id=13078030340&page=1&size=5"
+app.get("/review/content", (req, res) => {
+    request.get(
+        {
+            url:
+                "http://" +
+                envData.dbserver_host +
+                ":" +
+                envData.dbserver_port +
+                "/review/content?id=" +
+                req.query.id +
+                "&page=" +
+                req.query.page +
+                "&size=" +
+                req.query.size,
+            method: "GET",
+        },
+        function (error, response, body) {
+            res.send(body);
+        }
+    );
+});
+
+// [API]     Review Write API
 // [POST]    http://facadeserver:8080/review/write
 // [Example] http://localhost:8080/review/write
 // [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","checklists": [1, 1, 0, 1],"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8080/review/write"
@@ -87,6 +134,7 @@ app.delete("/review/delete", (req, res) => {
                 envData.dbserver_port +
                 "/review/delete?id=" +
                 req.query.id,
+            method: "DELETE",
         },
         function (error, response, body) {
             res.send(body);
