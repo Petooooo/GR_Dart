@@ -16,6 +16,37 @@ app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
 
+// [API]     Search API
+// [GET]     http://facadeserver:8080/search?searchword=${searchword}&page=${page}&size=${size}
+// [Example] http://localhost:8080/search?searchword=종이컵&page=1&size=5
+// [cUrl]    curl -X GET "http://localhost:8080/search?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
+app.get("/search", (req, res) => {
+    searchword = req.query.searchword;
+    page = req.query.page;
+    size = req.query.size;
+    detailURL = encodeURI(
+        "http://" +
+            envData.convserver_host +
+            ":" +
+            envData.convserver_port +
+            "/search?searchword=" +
+            searchword +
+            "&page=" +
+            page +
+            "&size=" +
+            size
+    );
+    request.get(
+        {
+            url: detailURL,
+            method: "GET",
+        },
+        function (error, response, body) {
+            res.send(body);
+        }
+    );
+});
+
 // [API]     Detail API
 // [GET]     http://facadeserver:8080/detail?id=${id}
 // [Example] http://localhost:8080/detail?id=13078030340
