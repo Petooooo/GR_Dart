@@ -9,55 +9,70 @@ const envData = JSON.parse(envFile);
 const app = express();
 const portnum = 8082;
 
-// Function to calculate the Levenshtein distance between two strings
-function levenshteinDistance(str1, str2) {
-    const m = str1.length;
-    const n = str2.length;
-
-    // Handling empty strings
-    if (m === 0) return n;
-    if (n === 0) return m;
-
-    // Initializing a 2D array
-    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
-    // Setting initial values
-    for (let i = 0; i <= m; i++) {
-        dp[i][0] = i;
-    }
-    for (let j = 0; j <= n; j++) {
-        dp[0][j] = j;
+// Transformer Class (Searchword to Keyword)
+class Transformer {
+    // Constructor
+    constructor(searchword, keywords) {
+        this.searchword = searchword;
+        this.keywords = keywords;
+        this.keyword = "";
     }
 
-    // Calculating the edit distance
-    for (let i = 1; i <= m; i++) {
-        for (let j = 1; j <= n; j++) {
-            const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-            dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+    // Function to calculate the Levenshtein distance between two strings
+    levenshteinDistance(str1, str2) {
+        const m = str1.length;
+        const n = str2.length;
+
+        // Handling empty strings
+        if (m === 0) return n;
+        if (n === 0) return m;
+
+        // Initializing a 2D array
+        const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+        // Setting initial values
+        for (let i = 0; i <= m; i++) {
+            dp[i][0] = i;
         }
-    }
-    return dp[m][n];
-}
-
-// Function to find the most similar keyword to a search word in a list of keywords
-function getKeyword(searchword, keywords) {
-    var keyword = "";
-    var maxSimilarity = 0;
-    for (let i = 0; i < keywords.length; i++) {
-        // Calculating Levenshtein distance
-        const distance = levenshteinDistance(searchword, keywords[i]);
-
-        // Calculating the length of the longer string
-        const maxLength = Math.max(searchword.length, keywords[i].length);
-
-        // Calculating similarity
-        const similarity = 1 - distance / maxLength;
-        if (similarity > maxSimilarity) {
-            keyword = keywords[i];
-            maxSimilarity = similarity;
+        for (let j = 0; j <= n; j++) {
+            dp[0][j] = j;
         }
+
+        // Calculating the edit distance
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+            }
+        }
+        return dp[m][n];
     }
-    return keyword;
+
+    // Function to find the most similar keyword to a search word in a list of keywords
+    transKeyword() {
+        var keyword = "";
+        var maxSimilarity = 0;
+        for (let i = 0; i < this.keywords.length; i++) {
+            // Calculating Levenshtein distance
+            const distance = this.levenshteinDistance(this.searchword, this.keywords[i]);
+
+            // Calculating the length of the longer string
+            const maxLength = Math.max(this.searchword.length, this.keywords[i].length);
+
+            // Calculating similarity
+            const similarity = 1 - distance / maxLength;
+            if (similarity > maxSimilarity) {
+                keyword = this.keywords[i];
+                maxSimilarity = similarity;
+            }
+        }
+        this.keyword = keyword;
+    }
+
+    // Get Keyword Function
+    getKeyword() {
+        return this.keyword;
+    }
 }
 
 // Body Parser Middleware
@@ -85,7 +100,9 @@ app.get("/search", (req, res) => {
             method: "GET",
         },
         function (error, response, body) {
-            keyword = getKeyword(searchword, JSON.parse(JSON.parse(body)).keywords);
+            trans = new Transformer(searchword, JSON.parse(JSON.parse(body)).keywords);
+            trans.transKeyword();
+            keyword = trans.getKeyword();
             searchURL = encodeURI(
                 "http://" +
                     envData.dbserver_host +
