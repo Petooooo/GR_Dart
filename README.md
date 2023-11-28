@@ -353,188 +353,340 @@ WrongPassword
 
 ## 3. Database Server
 
--   Request
+### 1. Product Info
 
-```
-- 상품 번호
-```
-
--   Response
-
-```
-{
-    "id": 1,
-    "pic_url": ".../...png",
-    "name": "레모나",
-    "vendor": "일동제약",
-    "price": 3000,
-    "deliveryFee": 0,
-    "originalURL": "https://...",
-    "reviewer": 30,
-    "checklists": [
-        {
-            "id": 1,
-            "num": 2
-        },
-        {
-            "id": 2,
-            "num": 2
-        }
-    ]
-}
-```
-
-#### 2) 상품 체크리스트 조회 (GET)
+#### 1) Product Search API [GET]
 
 <aside>
-📌 example.com/product/checklist/${ID}
+📌 http://dbserver:8081/search?keyword=${keyword}&page=${page}&size=${size}
 
 </aside>
 
 -   Request
 
 ```
-- 상품 번호
-```
-
--   Response
-
-```json
-{
-    "id": 1,
-    "checklists": [
-        {
-            "id": 1,
-            "num": 2
-        },
-        {
-            "id": 2,
-            "num": 2
-        }
-    ]
-}
-```
-
--   체크리스트
-
-```kotlin
-1. 증거 불충분
-2. 애매모호한 주장
-3. 거짓말
-4. 부적절한 인증 라벨
-```
-
----
-
-`**리뷰 관련**`
-
-#### 2) 리뷰 조회 (GET)
-
-<aside>
-📌 example.com/review/list/${ID}?page=${page}&size=${size}
-
-</aside>
-
--   Request
-
-```
-- 상품 번호
+- 키워드
 - 0부터 시작하는 페이지 번호
 - 페이지 크기
 ```
 
 -   Response
 
-```json
+```
 [
     {
-        "id": 1,
-        "content": "좋아요",
-        "checkTypes": [1, 2, 3]
-    }
-]
+        id: '13078',
+        picUrl: 'http://image1.jpg',
+        name: ' 친환경 종이컵 10온스',
+        vendor: 'CafenTea',
+        price: '4950',
+        reviewer: '12',
+        warningState: 2
+    },
+    {
+        id: '52048',
+        picUrl: 'http://image2.jpg',
+        name: ' 샴풍 일회용컵',
+        vendor: 'CafenTea',
+        price: '4950',
+    ...
 ```
 
-#### 3) 리뷰 작성 (POST)
+#### 2) Product Length API [GET]
 
 <aside>
-📌 example.com/review/write
+📌 http://dbserver:8081/length?keyword=${keyword}
 
 </aside>
 
 -   Request
 
 ```
-- 상품 번호 (**productId** : Int)
-- 닉네임 (**nickname** : String) (나중에 교체)
-- 내용 (**content** : String)
-- 체크리스트 해당 여부 <- [1, 2 ...] (**checkTypes** : List<Int>)
+- 키워드
 ```
 
 -   Response
 
-```json
-{ "id": 1 }
+```
+{
+    length: 11
+}
 ```
 
-#### 4) 리뷰 삭제 (DELETE) - 미구현
+#### 3) Product Keywords API [GET]
 
 <aside>
-📌 example.com/review/delete
+📌 http://dbserver:8081/keywords
 
 </aside>
 
 -   Request
 
 ```
-- 닉네임 (**nickname** : String) (나중에 교체)
+- X
 ```
 
 -   Response
 
-```json
-{ "id": 1 }
+```
+{
+    keywords: [
+        '샴푸',
+        '세제',
+        '페인트',
+        '우유',
+        '토마토',
+        '접시',
+        '젓가락',
+        '채소',
+        '비닐',
+        '호일',
+        '차',
+        '계란',
+        '수세미',
+        '휴지',
+        ...
 ```
 
----
-
-### 5) 체크리스트 조회 (GET)
+#### 4) Product Detail Content API [GET]
 
 <aside>
-📌 example.com/checklists
+📌 http://dbserver:8081/detail/content?id=${product_id}
 
 </aside>
 
 -   Request
 
 ```
-- 상품 ID
+- 상품 id
 ```
 
 -   Response
 
-```json
+```
+{
+    id: '13078',
+    picUrl: 'http://image1.jpg',
+    name: ' 친환경 종이컵 10온스',
+    vendor: 'CafenTea',
+    price: '4950',
+    deliveryFee: '3000',
+    originalUrl: 'http://shop.com',
+    reviewer: '12',
+    checklists: '[3,2,7,0]'
+}
+```
+
+#### 5) Product Detail Image API [GET]
+
+<aside>
+📌 http://dbserver:8081/detail/image?id=${product_id}
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+```
+
+-   Response
+
+```
+{
+    detailpicUrl: [
+        'http://image1.jpg',
+        'http://image2.jpg',
+        'http://image3.jpg',
+        'http://image4.jpg',
+        'http://image5.jpg',
+        'http://image6.jpg',
+        'http://image7.jpg',
+        'http://image8.jpg',
+        'http://image9.jpg',
+        'http://image10.jpg',
+        'http://image11.jpg',
+        'http://image12.jpg',
+        'http://image13.jpg',
+        'http://image14.jpg',
+        ...
+```
+
+#### 6) Product Item Table Update API [PUT]
+
+<aside>
+📌 http://dbserver:8081/update
+
+```
+{
+    id: ${product_id},
+    check_1: ${check_1},
+    check_2: ${check_2},
+    check_3: ${check_3},
+    check_4: ${check_4},
+    reviewer: ${reviewer}
+}
+```
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+- 1번째 체크리스트 전체 체크 수
+- 2번째 체크리스트 전체 체크 수
+- 3번째 체크리스트 전체 체크 수
+- 4번째 체크리스트 전체 체크 수
+- 리뷰 작성자 수
+```
+
+-   Response
+
+```
+success
+```
+
+### 2. Review Info
+
+#### 1) Product Review Content API [GET]
+
+<aside>
+📌 http://dbserver:8081/review/content?id=${product_id}&page=${page}&size=${size}
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+- 리뷰 페이지 번호
+- 리뷰 페이지 크기
+```
+
+-   Response
+
+```
 [
     {
-        "id": 1,
-        "name": "증거 불충분"
+        review_id: 57,
+        name: 'John',
+        content: ' This is good.',
+        checklists: '[0,0,1,0]'
     },
     {
-        "id": 2,
-        "name": "애매모호한 주장"
+        review_id: 81,
+        name: 'Steve',
+        content: ' Not too bad.',
+        checklists: '[0,1,0,1]'
     },
     {
-        "id": 3,
-        "name": "거짓말"
-    },
-    {
-        "id": 4,
-        "name": "부적절한 인증 라벨"
-    }
-]
+        review_id: 103,
+        name: 'Jenny',
+        ...
 ```
 
--   ID 별 체크리스트 종류
+#### 2) Product Review Length API [GET]
+
+<aside>
+📌 http://dbserver:8081/review/length?id=${product_id}
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+```
+
+-   Response
+
+```
+{
+    length: 8
+}
+```
+
+#### 3) Product Review Password API [GET]
+
+<aside>
+📌 http://dbserver:8081/review/password?id=${review_id}
+
+</aside>
+
+-   Request
+
+```
+- 리뷰 id
+```
+
+-   Response
+
+```
+{
+    password: 1234
+}
+```
+
+#### 4) Product Review Write API [POST]
+
+<aside>
+📌 http://dbserver:8081/review/write
+
+```
+{
+    id: ${product_id},
+    name: ${name},
+    password: ${password},
+    check_1: ${check_1},
+    check_2: ${check_2},
+    check_3: ${check_3},
+    check_4: ${check_4},
+    content: ${content}
+}
+```
+
+</aside>
+
+-   Request
+
+```
+- 상품 id
+- 리뷰 작성자명
+- 리뷰 작성시 비밀번호
+- 1번째 체크리스트 체크 여부
+- 2번째 체크리스트 체크 여부
+- 3번째 체크리스트 체크 여부
+- 4번째 체크리스트 체크 여부
+- 리뷰 내용
+```
+
+-   Response
+
+```
+success
+```
+
+#### 5) Product Review Delete API [DELETE]
+
+<aside>
+📌 http://dbserver:8081/review/delete?id=${review_id}
+
+</aside>
+
+-   Request
+
+```
+- 리뷰 id
+```
+
+-   Response
+
+```
+success
+```
+
+## 4. Checklists
 
 ```
 1. 증거 불충분
@@ -543,11 +695,12 @@ WrongPassword
 4. 부적절한 인증 라벨
 ```
 
-### 6) 예외 처리
+## 5. Exception Handler
 
--   HTTP 에러 코드 200, 400, 404, 500
--   응답
+-   HTTP Error Code 404
 
-```json
-{ "message": "" }
+-   Response
+
+```
+404 Error: Page Not Found
 ```

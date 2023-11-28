@@ -257,7 +257,7 @@ app.post("/review/write", (request, response) => {
     }
 });
 
-// [API]     Update Product Item Table API
+// [API]     Product Item Table Update API
 // [PUT]     http://dbserver:8081/update
 // [Example] http://localhost:8081/update
 // [cUrl]    curl -d '{"id":"13078030340","check_1":3,"check_2":2,"check_3":1,"check_4":5,"reviewer":14}' -H "Content-Type: application/json" -X PUT "http://localhost:8081/update"
@@ -287,7 +287,7 @@ app.put("/update", (request, response) => {
     }
 });
 
-// [API]     Delete Review API
+// [API]     Product Review Delete API
 // [DELETE]  http://dbserver:8081/review/delete?id=${review_id}
 // [Example] http://localhost:8081/review/delete?id=1
 // [cUrl]    curl -X DELETE "http://localhost:8081/review/delete?id=1"
