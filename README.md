@@ -23,7 +23,7 @@
 
 -   Response
 
-```json
+```
 [
     {
         id: '13078',
@@ -36,7 +36,7 @@
     },
     {
         id: '52048',
-ㅤ      picUrl: 'http://image2.jpg',
+        picUrl: 'http://image2.jpg',
         name: ' 샴풍 일회용컵',
         vendor: 'CafenTea',
         price: '4950',
@@ -79,7 +79,7 @@
 
 -   Response
 
-```json
+```
 {
     id: '13078',
     picUrl: 'http://image1.jpg',
@@ -119,7 +119,7 @@
 
 -   Response
 
-```json
+```
 [
     {
         review_id: 57,
@@ -144,7 +144,7 @@
 <aside>
 📌 http://facadeserver:8080/review/write
 
-```json
+```
 {
     id: ${product_id},
     name: ${name},
@@ -204,7 +204,7 @@ success
 
 -   Response
 
-```json
+```
 {
     "id": 1,
     "pic_url": ".../...png",
