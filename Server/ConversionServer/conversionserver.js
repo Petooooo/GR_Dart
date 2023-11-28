@@ -2,6 +2,7 @@ const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
+const { userInfo } = require("os");
 
 const envFile = fs.readFileSync("./env.json", "utf8");
 const envData = JSON.parse(envFile);
@@ -46,8 +47,10 @@ function getKeyword(searchword, keywords) {
     for (let i = 0; i < keywords.length; i++) {
         // Calculating Levenshtein distance
         const distance = levenshteinDistance(searchword, keywords[i]);
+
         // Calculating the length of the longer string
         const maxLength = Math.max(searchword.length, keywords[i].length);
+
         // Calculating similarity
         const similarity = 1 - distance / maxLength;
         if (similarity > maxSimilarity) {
@@ -61,6 +64,7 @@ function getKeyword(searchword, keywords) {
 // Body Parser Middleware
 app.use(bodyParser.json());
 
+// Http Server Threads
 app.get("/", (req, res) => {
     response.send(`<h1>Main Page</h1>`);
 });
@@ -108,27 +112,35 @@ app.get("/search", (req, res) => {
     );
 });
 
-// [API]     Review Content API
-// [GET]     http://facadeserver:8082/review/content?id=${id}&page=${page}&size=${size}
-// [Example] http://localhost:8082/review/content?id=13078030340&page=1&size=5
-// [cUrl]    curl -X GET "http://localhost:8082/review/content?id=13078030340&page=1&size=5"
-app.get("/review/content", (req, res) => {
+// [API]     Product Detail API
+// [GET]     http://conversionserver:8082/detail?id=${id}
+// [Example] http://localhost:8082/detail?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8082/detail?id=13078030340"
+app.get("/detail", (req, res) => {
+    id = req.query.id;
+    contentURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/detail/content?id=" + id
+    );
+    imageURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/detail/image?id=" + id
+    );
     request.get(
         {
-            url:
-                "http://" +
-                envData.dbserver_host +
-                ":" +
-                envData.dbserver_port +
-                "/review/content?id=" +
-                req.query.id +
-                "&page=" +
-                req.query.page +
-                "&size=" +
-                req.query.size,
+            url: contentURL,
+            method: "GET",
         },
-        function (error, response, body) {
-            res.send(body);
+        function (error1, response1, body1) {
+            request.get(
+                {
+                    url: imageURL,
+                    method: "GET",
+                },
+                function (error2, response2, body2) {
+                    result = JSON.parse(JSON.parse(body1));
+                    result.detailpicUrl = JSON.parse(JSON.parse(body2)).detailpicUrl;
+                    res.send(JSON.stringify(result));
+                }
+            );
         }
     );
 });
