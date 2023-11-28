@@ -138,7 +138,7 @@ app.get("/detail/content", (request, response) => {
 app.get("/detail/image", (request, response) => {
     id = request.query.id;
     connection.query(
-        "SELECT detailpicUrl FROM detailpicUrlTable WHERE FK_itemTable = '" + id + "'",
+        "SELECT detailpicUrl FROM detailpicTable WHERE FK_itemTable = '" + id + "'",
         function (error, results, fields) {
             if (error) throw error;
             var data = new Object();
@@ -151,6 +151,28 @@ app.get("/detail/image", (request, response) => {
                 console.log(e);
             }
             data.detailpicUrl = arr;
+            response.json(JSON.stringify(data));
+        }
+    );
+});
+
+// [API]     Product Review Length API
+// [GET]     http://dbserver:8081/review/length?id=${id}
+// [Example] http://localhost:8081/review/length?id=13078030340
+// [cUrl]    curl -X GET "http://localhost:8081/review/length?id=13078030340"
+app.get("/review/length", (request, response) => {
+    id = request.query.id;
+    connection.query(
+        "SELECT COUNT(*) FROM reviewTable WHERE FK_itemTable = '" + id + "'",
+        function (error, results, fields) {
+            if (error) throw error;
+            var data = new Object();
+            console.log(results);
+            try {
+                data.length = results[0]["COUNT(*)"];
+            } catch (e) {
+                console.log(e);
+            }
             response.json(JSON.stringify(data));
         }
     );
