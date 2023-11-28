@@ -2,20 +2,18 @@
 
 # Server
 
-## API / 기능명세
+## Facade Server API
 
-### 1. 메인페이지
+### 1. Product Info
 
-`**상품 관련**`
-
-#### 1) 목록 조회 + 검색 (GET)
+#### 1) Search API [GET]
 
 <aside>
-📌 example[.](http://domain.com/product/${ID}/reviews?offset)com/product/list?q=${queryString}&page=${page}&size=${size}
+📌 http://facadeserver:8080/search?searchword=${searchword}&page=${page}&size=${size}
 
 </aside>
 
--   요청
+-   Request
 
 ```
 - 검색어
@@ -23,31 +21,32 @@
 - 페이지 크기
 ```
 
--   반환
+-   Response
 
 ```json
 [
     {
-        "id": 1,
-        "picThumbnail": ".../...png",
-        "name": "레모나",
-        "vendor": "일동제약",
-        "price": 3000,
-        "reviewer": 30,
-        "checklists": [
-            {
-                "id": 1,
-                "num": 2
-            }
-        ]
-    }
-]
+        id: '13078',
+        picUrl: 'http://image1.jpg',
+        name: ' 친환경 종이컵 10온스',
+        vendor: 'CafenTea',
+        price: '4950',
+        reviewer: '12',
+        warningState: 2
+    },
+    {
+        id: '52048',
+ㅤ      picUrl: 'http://image2.jpg',
+        name: ' 샴풍 일회용컵',
+        vendor: 'CafenTea',
+        price: '4950',
+    ...
 ```
 
-#### 2) 상품 목록 길이 조회 (GET)
+#### 2) Search Length API [GET]
 
 <aside>
-📌 example[.](http://domain.com/product/${ID}/reviews?offset)com/product/size?q=${queryString}
+📌 http://facadeserver:8080/search/length?searchword=${searchword}
 
 </aside>
 
@@ -65,14 +64,137 @@
 }
 ```
 
-### 2. 상품 조회 페이지
-
-#### 1) 상품 데이터 조회 (GET)
+#### 3) Detail API [GET]
 
 <aside>
-📌 example.com/product/detail/${ID}
+📌 http://facadeserver:8080/detail?id=${product_id}
 
 </aside>
+
+-   요청
+
+```
+- 상품 id
+```
+
+-   반환
+
+```json
+{
+    id: '13078',
+    picUrl: 'http://image1.jpg',
+    name: ' 친환경 종이컵 10온스',
+    vendor: 'CafenTea',
+    price: '4950',
+    deliveryFee: '3000',
+    originalUrl: 'http://shop.com',
+    reviewer: '12',
+    checklists: '[3,2,7,0]',
+    detailpicUrl: [
+        'http://image1.jpg',
+        'http://image2.jpg',
+        'http://image3.jpg',
+        ...
+    ]
+}
+
+```
+
+### 2. Review Info
+
+#### 1) Review Content API [GET]
+
+<aside>
+📌 http://facadeserver:8080/review/content?id=${product_id}&page=${page}&size=${size}
+
+</aside>
+
+-   요청
+
+```
+- 상품 id
+- 리뷰 페이지 번호
+- 리뷰 페이지 크기
+```
+
+-   반환
+
+```json
+[
+    {
+        review_id: 57,
+        name: 'John',
+        content: ' This is good.',
+        checklists: '[0,0,1,0]'
+    },
+    {
+        review_id: 81,
+        name: 'Steve',
+        content: ' Not too bad.',
+        checklists: '[0,1,0,1]'
+    },
+    {
+        review_id: 103,
+        name: 'Jenny',
+        ...
+```
+
+#### 2) Review Write API [POST]
+
+<aside>
+📌 http://facadeserver:8080/review/write
+
+```json
+{
+    id: ${product_id},
+    name: ${name},
+    password: ${password},
+    checklists: ${checklists},
+    content: ${content}
+}
+```
+
+</aside>
+
+-   요청
+
+```
+- 상품 id
+- 리뷰 작성자명
+- 리뷰 작성시 비밀번호
+- 체크리스트
+- 리뷰 내용
+```
+
+-   반환
+
+```
+success
+```
+
+#### 3) Review Delete API [GET]
+
+<aside>
+📌 http://facadeserver:8080/review/delete?id=${review_id}&password=${password}
+
+</aside>
+
+-   요청
+
+```
+- 리뷰 id
+- 리뷰 작성시 비밀번호
+```
+
+-   반환
+
+```
+success
+```
+
+## 2. Conversion Server
+
+## 3. Database Server
 
 -   요청
 
