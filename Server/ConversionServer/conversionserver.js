@@ -2,7 +2,6 @@ const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
-const { userInfo } = require("os");
 
 const envFile = fs.readFileSync("./env.json", "utf8");
 const envData = JSON.parse(envFile);
