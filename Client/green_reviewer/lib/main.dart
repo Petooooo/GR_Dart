@@ -119,32 +119,45 @@ class _ProductListState extends State<ProductList> {
   int _hoveredIndex = -1;
   int currentPage = 1;
   late List<Product> products;
- 
+
   @override
   void initState() {
     super.initState();
     // Initialize the products list when the state is created
-    products = generateProductList();
+    initializeProducts();
   }
 
-  Future<List<Product>> fetchProducts(String searchword, int page) async {
-    print('${searchword} ${page}');
-    String url = 'http://localhost:8080/search?searchword=$searchword&page=$page&size=10';
+  void initializeProducts() async {
+    List<Product> initialProducts = await fetchProducts('휴지');
+    setState(() {
+      products = initialProducts;
+    });
+  }
+
+  Future<List<Product>> fetchProducts(String searchword) async {
+    print('Search Word: ${searchword}');
+    String url =
+        'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/search?searchword=$searchword&page=1&size=100';
     print(url);
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the products
       final List<dynamic> responseData = json.decode(response.body);
-      print(response.body);
+
       // Map the response data to a list of Product objects
       List<Product> products = responseData.map((data) {
+        int state = 0;
+        int reviewCount = int.tryParse(data['reviewer']) ?? 0;
+        double price = double.tryParse(data['price']) ?? 0.0;
         return Product(
-          productName: data['productName'],
+          productID: data['id'],
+          productName: data['name'],
           vendor: data['vendor'],
-          reviewCount: data['reviewCount'],
-          state: data['state'],
-          price: data['price'].toDouble(),
+          thumbnail: data['picThumbnail'],
+          reviewCount: reviewCount,
+          state: state,
+          price: price,
         );
       }).toList();
 
@@ -155,58 +168,27 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
-
-  List<Product> generateProductList() {
-    print(currentPage);
-    fetchProducts('우유', currentPage);
-    return List.generate(
-      widget.pageItemNumber,
-      (index) => createProduct(index),
-    );
-  }
-
-  Product createProduct(int index) {
-    return Product(
-      productName: 'Product ${index + 1}',
-      vendor: 'Vendor ${index + 1}',
-      reviewCount: (index + 1) * 10,
-      state: 'In Stock',
-      price: (index + 1) * 20.0,
-    );
-  }
-
-  void updateProductDetails() {
+  void updateProductDetails() async {
     // Replace this with your logic to update product details based on the current page
-    setState(() {
-      products = generateProductList();
+    setState(() async {
+      List<Product> updatedProducts = await fetchProducts('휴지');
+      products = updatedProducts;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Replace this with your actual list of products
-    List<Product> products = List.generate(
-      widget.pageItemNumber,
-      (index) => Product(
-        productName: 'Product ${index + 1}',
-        vendor: 'Vendor ${index + 1}',
-        reviewCount: (index + 1) * 10,
-        state: 'In Stock',
-        price: (index + 1) * 20.0,
-      ),
-    );
-
     return Column(
       children: [
         Expanded(
           child: ListView.builder(
-            itemCount: products.length + 1, // Add 1 for the PageNavigation
+            itemCount: (currentPage == (products.length) ~/ 8 + 1) ? (products.length % 8) + 1  : 9, // Add 1 for the PageNavigation
             itemBuilder: (context, index) {
-              if (index == products.length) {
+              if (index == 8 || (currentPage == (products.length) ~/ 8 + 1 && index == products.length % 8)) {
                 // This is the last item, add the PageNavigation
                 return PageNavigation(
                   currentPage: currentPage,
-                  totalPages: 10, // Change this to the actual total number of pages
+                  totalPages: (products.length) ~/ 8 + 1, // Change this to the actual total number of pages
                   onPageChanged: (page) {
                     setState(() {
                       currentPage = page;
@@ -244,11 +226,13 @@ class _ProductListState extends State<ProductList> {
                         Container(
                           width: 256.0,
                           height: 256.0,
-                          color: Colors.grey,
-                          // Placeholder color for product image
-                          // Replace the color with your actual product image or Image widget
+                          child: Image.network(
+                            products[(currentPage - 1) * 8 + index].thumbnail,
+                            width: 128.0,
+                            height: 128.0,
+                            fit: BoxFit.cover, // Adjust the BoxFit as needed
+                          ),
                         ),
-
                         // Center Section: Product Details
                         Expanded(
                           child: Padding(
@@ -257,13 +241,13 @@ class _ProductListState extends State<ProductList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  products[index].productName,
+                                  products[(currentPage - 1) * 8 + index].productName,
                                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 8.0),
-                                Text('Vendor: ${products[index].vendor}'),
+                                Text('Vendor: ${products[(currentPage - 1) * 8 + index].vendor}'),
                                 SizedBox(height: 32),
-                                Text('Review Count: ${products[index].reviewCount}'),
+                                Text('Review Count: ${products[(currentPage - 1) * 8 + index].reviewCount}'),
                               ],
                             ),
                           ),
@@ -273,8 +257,8 @@ class _ProductListState extends State<ProductList> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('State: ${products[index].state}'),
-                            Text('Price: \$${products[index].price.toStringAsFixed(2)}'),
+                            Text('State: ${products[(currentPage - 1) * 8 + index].state}'),
+                            Text('Price: ${products[(currentPage - 1) * 8 + index].price.toStringAsFixed(0)}'),
                           ],
                         ),
                       ],
@@ -329,15 +313,18 @@ class PageNavigation extends StatelessWidget {
   }
 }
 
-
 class Product {
+  final String productID;
   final String productName;
   final String vendor;
+  final String thumbnail;
   final int reviewCount;
-  final String state;
+  final int state;
   final double price;
 
   Product({
+    required this.productID,
+    required this.thumbnail,
     required this.productName,
     required this.vendor,
     required this.reviewCount,
