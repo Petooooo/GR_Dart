@@ -41,7 +41,7 @@ for keyword in os.listdir(path):
                 pass
             for detailUrl in jsonFile['detailpicUrl']:
                 detailpicUrl = "\'" + detailUrl + "\'"
-                query2 = "INSERT INTO detailpicUrlTable(detailpicUrl, FK_itemTable) VALUES(" + detailpicUrl + "," + productId + ");"
+                query2 = "INSERT INTO detailpicTable(detailpicUrl, FK_itemTable) VALUES(" + detailpicUrl + "," + productId + ");"
                 try:
                     cursor.execute(query2)
                 except:
