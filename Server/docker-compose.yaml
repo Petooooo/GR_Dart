@@ -1,36 +1,35 @@
 version: "3.9"
 
 services:
-  mysql:
-    image: mysql:8.1.0
-    restart: "always"
-    ports:
-      - "3306:3306"
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-    volumes:
-      - ./Database/init_db/:/docker-entrypoint-initdb.d/
+    mysql:
+        image: mysql:8.1.0
+        restart: "always"
+        ports:
+            - "3306:3306"
+        container_name: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 1234
+        volumes:
+            - ./Database/init_db/:/docker-entrypoint-initdb.d/
 
-  facadeserver:
-    image: petoo/facadeserver:1.0
-    restart: "always"
-    ports:
-      - "8080:8080"
-    container_name: facadeserver
+    facadeserver:
+        image: petoo/facadeserver:1.0
+        restart: "always"
+        ports:
+            - "8080:8080"
+        container_name: facadeserver
 
-  databaseserver:
-    image: petoo/databaseserver:1.0
-    restart: "always"
-    ports:
-      - "8081:8081"
-    depends_on:
-      - mysql
-    container_name: databaseserver
+    dbserver:
+        image: petoo/databaseserver:1.0
+        ports:
+            - "8081:8081"
+        depends_on:
+            - mysql
+        container_name: dbserver
 
-  conversionserver:
-    image: petoo/conversionserver:1.0
-    restart: "always"
-    ports:
-      - "8082:8082"
-    container_name: conversionserver
+    conversionserver:
+        image: petoo/conversionserver:1.0
+        restart: "always"
+        ports:
+            - "8082:8082"
+        container_name: conversionserver
