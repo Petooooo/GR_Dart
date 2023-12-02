@@ -1,5 +1,6 @@
 const fs = require("fs");
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const request = require("request");
 
@@ -9,9 +10,14 @@ const envData = JSON.parse(envFile);
 const app = express();
 const portnum = 8080;
 
-// Body Parser Middleware
+// Using Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
+// CORS Response Setting
+app.options("*", cors());
+
+// HTTP Server
 app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });

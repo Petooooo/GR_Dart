@@ -1,5 +1,6 @@
 const fs = require("fs");
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const request = require("request");
 
@@ -75,12 +76,16 @@ class Transformer {
     }
 }
 
-// Body Parser Middleware
+// Using Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
-// Http Server Threads
+// CORS Response Setting
+app.options("*", cors());
+
+// HTTP Server
 app.get("/", (req, res) => {
-    response.send(`<h1>Main Page</h1>`);
+    res.send(`<h1>Main Page</h1>`);
 });
 
 // [API]     Product Search API

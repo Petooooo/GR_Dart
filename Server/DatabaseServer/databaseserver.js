@@ -1,6 +1,7 @@
 const fs = require("fs");
 const mysql = require("mysql");
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const envFile = fs.readFileSync("./env.json", "utf8");
@@ -20,9 +21,14 @@ const conn = {
 var connection = mysql.createConnection(conn); // Create DB Connection
 connection.connect(); // Connect DB
 
-// Body Parser Middleware
+// Using Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
+// CORS Response Setting
+app.options("*", cors());
+
+// HTTP Server
 app.get("/", (request, response) => {
     response.send(`<h1>Main Page</h1>`);
 });
