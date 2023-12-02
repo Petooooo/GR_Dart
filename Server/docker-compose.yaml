@@ -13,14 +13,15 @@ services:
             - ./Database/init_db/:/docker-entrypoint-initdb.d/
 
     facadeserver:
-        image: petoo/facadeserver:1.0
+        image: petoo/facadeserver:1.1
         restart: "always"
         ports:
             - "8080:8080"
         container_name: facadeserver
 
     dbserver:
-        image: petoo/databaseserver:1.0
+        image: petoo/databaseserver:1.1
+        restart: "always"
         ports:
             - "8081:8081"
         depends_on:
@@ -28,7 +29,7 @@ services:
         container_name: dbserver
 
     conversionserver:
-        image: petoo/conversionserver:1.0
+        image: petoo/conversionserver:1.1
         restart: "always"
         ports:
             - "8082:8082"
