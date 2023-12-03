@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (create) => GlobalStore())
+      ],
+      child: MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,30 +21,49 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            SearchBarWidget(),
-            Expanded(
-              child: ProductList(pageItemNumber: 10), // Adjust the number as needed
-            ),
-          ],
-        ),
+        body: WholeScreen(),
       ),
     );
   }
 }
 
+class WholeScreen extends StatefulWidget {
+  @override
+  _WholeScreenState createState() => _WholeScreenState();
+}
+
+class _WholeScreenState extends State<WholeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SearchBarWidget(
+          onSearchResultUpdate: () {
+            setState(() {});
+          },
+        ),
+        Expanded(
+          child: ProductList(pageItemNumber: 10),
+        ),
+      ],
+    );
+  }
+}
+
 class SearchBarWidget extends StatefulWidget {
+  final VoidCallback onSearchResultUpdate;
+  SearchBarWidget({required this.onSearchResultUpdate});
   @override
   _SearchBarWidgetState createState() => _SearchBarWidgetState();
 }
 
-class _SearchBarWidgetState extends State<SearchBarWidget> {
+class _SearchBarWidgetState extends State<SearchBarWidget> with ChangeNotifier {
   TextEditingController _searchController = TextEditingController();
   String _searchResult = '';
   FocusNode _focusNode = FocusNode();
-
   bool _isFocused = false;
+
+  String get searchResult => _searchResult;
 
   @override
   void initState() {
@@ -95,13 +122,14 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   }
 
   void _onLogoClick() {
-    print('로고 이미지 클릭!');
+    _updateSearchResult('용기');
   }
-
   void _updateSearchResult(String searchword) {
-    setState(() {
-      _searchResult = '검색 결과: $searchword';
-      print(_searchResult);
+    fetchProducts(searchword).then((List<Product> fetchedProducts) {
+      Provider.of<GlobalStore>(context, listen: false).products = fetchedProducts;
+      Provider.of<GlobalStore>(context, listen: false).currentPage = 1;
+      notifyListeners();
+      widget.onSearchResultUpdate();
     });
   }
 }
@@ -115,65 +143,37 @@ class ProductList extends StatefulWidget {
   _ProductListState createState() => _ProductListState();
 }
 
-class _ProductListState extends State<ProductList> {
+class _ProductListState extends State<ProductList> with ChangeNotifier {
   int _hoveredIndex = -1;
-  int currentPage = 1;
-  late List<Product> products;
+  // Remove the following line as it's not needed anymore
+  // int currentPage = 1;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     // Initialize the products list when the state is created
-    initializeProducts();
+    updateProductDetails('용기');
   }
 
-  void initializeProducts() async {
-    List<Product> initialProducts = await fetchProducts('휴지');
-    setState(() {
-      products = initialProducts;
-    });
-  }
-
-  Future<List<Product>> fetchProducts(String searchword) async {
-    print('Search Word: ${searchword}');
-    String url =
-        'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/search?searchword=$searchword&page=1&size=100';
-    print(url);
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      // If the server returns a 200 OK response, parse the products
-      final List<dynamic> responseData = json.decode(response.body);
-
-      // Map the response data to a list of Product objects
-      List<Product> products = responseData.map((data) {
-        int state = 0;
-        int reviewCount = int.tryParse(data['reviewer']) ?? 0;
-        double price = double.tryParse(data['price']) ?? 0.0;
-        return Product(
-          productID: data['id'],
-          productName: data['name'],
-          vendor: data['vendor'],
-          thumbnail: data['picThumbnail'],
-          reviewCount: reviewCount,
-          state: state,
-          price: price,
-        );
-      }).toList();
-
-      return products;
-    } else {
-      // If the server did not return a 200 OK response, throw an exception.
-      throw Exception('Failed to load products');
-    }
-  }
-
-  void updateProductDetails() async {
+  void updateProductDetails(String searchword) async {
     // Replace this with your logic to update product details based on the current page
-    setState(() async {
-      List<Product> updatedProducts = await fetchProducts('휴지');
-      products = updatedProducts;
-    });
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      List<Product> updatedProducts = await fetchProducts(searchword);
+      setState(() {
+        context.read<GlobalStore>().products = updatedProducts;
+      });
+    } catch (e) {
+      // 에러 처리, 예를 들어 사용자에게 에러 메시지를 보여줍니다.
+      print('제품을 가져오는 중 오류 발생: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -182,22 +182,39 @@ class _ProductListState extends State<ProductList> {
       children: [
         Expanded(
           child: ListView.builder(
-            itemCount: (currentPage == (products.length) ~/ 8 + 1) ? (products.length % 8) + 1  : 9, // Add 1 for the PageNavigation
+            itemCount: (context.read<GlobalStore>().currentPage == (context.read<GlobalStore>().products.length) ~/ 8 + 1) ? (context.read<GlobalStore>().products.length % 8) + 1  : 9, // Add 1 for the PageNavigation
             itemBuilder: (context, index) {
-              if (index == 8 || (currentPage == (products.length) ~/ 8 + 1 && index == products.length % 8)) {
+              if(context.read<GlobalStore>().products.length == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 32.0),
+                    Text('No Such Items'),
+                    SizedBox(height: 32.0),
+                    PageNavigation(
+                      currentPage: 1,
+                      totalPages: 1, // Change this to the actual total number of pages
+                      onPageChanged: (page) {
+                        // Update currentPage in GlobalStore
+                        context.read<GlobalStore>().currentPage = page;
+                        setState(() {});
+                      },
+                    )
+                  ],
+                );
+              }
+              if (index == 8 || (context.read<GlobalStore>().currentPage == (context.read<GlobalStore>().products.length) ~/ 8 + 1 && index == context.read<GlobalStore>().products.length % 8)) {
                 // This is the last item, add the PageNavigation
                 return PageNavigation(
-                  currentPage: currentPage,
-                  totalPages: (products.length) ~/ 8 + 1, // Change this to the actual total number of pages
+                  currentPage: context.read<GlobalStore>().currentPage,
+                  totalPages: (context.read<GlobalStore>().products.length) ~/ 8 + 1, // Change this to the actual total number of pages
                   onPageChanged: (page) {
-                    setState(() {
-                      currentPage = page;
-                      updateProductDetails(); // Call the method to update product details
-                    });
+                    // Update currentPage in GlobalStore
+                    context.read<GlobalStore>().currentPage = page;
+                    setState(() {});
                   },
                 );
               }
-
               return MouseRegion(
                 onEnter: (_) {
                   setState(() {
@@ -227,7 +244,7 @@ class _ProductListState extends State<ProductList> {
                           width: 256.0,
                           height: 256.0,
                           child: Image.network(
-                            products[(currentPage - 1) * 8 + index].thumbnail,
+                            context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].thumbnail,
                             width: 128.0,
                             height: 128.0,
                             fit: BoxFit.cover, // Adjust the BoxFit as needed
@@ -241,13 +258,13 @@ class _ProductListState extends State<ProductList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  products[(currentPage - 1) * 8 + index].productName,
+                                  context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].productName,
                                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 8.0),
-                                Text('Vendor: ${products[(currentPage - 1) * 8 + index].vendor}'),
+                                Text('Vendor: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].vendor}'),
                                 SizedBox(height: 32),
-                                Text('Review Count: ${products[(currentPage - 1) * 8 + index].reviewCount}'),
+                                Text('Review Count: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].reviewCount}'),
                               ],
                             ),
                           ),
@@ -257,8 +274,8 @@ class _ProductListState extends State<ProductList> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('State: ${products[(currentPage - 1) * 8 + index].state}'),
-                            Text('Price: ${products[(currentPage - 1) * 8 + index].price.toStringAsFixed(0)}'),
+                            Text('State: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state}'),
+                            Text('Price: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].price.toStringAsFixed(0)}'),
                           ],
                         ),
                       ],
@@ -331,4 +348,43 @@ class Product {
     required this.state,
     required this.price,
   });
+}
+
+class GlobalStore extends ChangeNotifier{
+  List<Product> products = [];
+  int currentPage = 1;
+}
+
+Future<List<Product>> fetchProducts(String searchword) async {
+  print('Search Word: ${searchword}');
+  String url =
+      'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/search?searchword=$searchword&page=1&size=100';
+  print(url);
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    // If the server returns a 200 OK response, parse the products
+    final List<dynamic> responseData = json.decode(response.body);
+
+    // Map the response data to a list of Product objects
+    List<Product> products = responseData.map((data) {
+      int state = 0;
+      int reviewCount = int.tryParse(data['reviewer']) ?? 0;
+      double price = double.tryParse(data['price']) ?? 0.0;
+      return Product(
+        productID: data['id'],
+        productName: data['name'],
+        vendor: data['vendor'],
+        thumbnail: data['picThumbnail'],
+        reviewCount: reviewCount,
+        state: state,
+        price: price,
+      );
+    }).toList();
+
+    return products;
+  } else {
+    // If the server did not return a 200 OK response, throw an exception.
+    throw Exception('Failed to load products');
+  }
 }
