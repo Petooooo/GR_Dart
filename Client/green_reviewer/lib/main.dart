@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
@@ -390,6 +391,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
             var productOriginalUrl = detailJson['originalUrl'];
             var productDetailPicUrls = detailJson['detailpicUrl'];
             var productChecklists = json.decode(detailJson['checklists']);
+            Provider.of<GlobalStore>(context, listen: false).checklists = [
+              productChecklists[0].toDouble(),
+              productChecklists[1].toDouble(),
+              productChecklists[2].toDouble(),
+              productChecklists[3].toDouble()
+            ];
+            print(context.read<GlobalStore>().checklists);
             // productReviews를 List<dynamic>으로 선언
             List<dynamic> productReviews = [];
 
@@ -515,7 +523,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                         ),
                       ),
                       SizedBox(height: 16),
-                      // Middle Container
+                      /*
+                      // Detail Images
                       if (productDetailPicUrls != null)
                         for (var detailPicUrl in productDetailPicUrls!)
                           Container(
@@ -536,6 +545,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                               ]
                             ),
                           ),
+                      */
                       SizedBox(height: 16),
                       Container(
                         width: 1300,
@@ -551,7 +561,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 32),
+                      SizedBox(height: 12),
                       // Bottom Container
                       Container(
                         width: 1300,
@@ -654,35 +664,35 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                 ],
                               ),
                             ),
-                            Container(
-                              height: 600,
-                              width: 0.08, // 세로선의 두께 설정
-                              color: Color(0xFFDCDCDC), // 세로선의 색상 설정
+                            Column(
+                              children: [
+                                SizedBox(height: 50),
+                                Container(
+                                  height: 650,
+                                  width: 0.08, // 세로선의 두께 설정
+                                  color: Color(0xFFDCDCDC), // 세로선의 색상 설정
+                                ),
+                              ]
                             ),
                             Expanded(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 32, height: 16),
-                                      Text('증거 불충분'),
-                                      SizedBox(width: 32, height: 16),
-                                      Text('부적절한 인증 라벨'),
-                                      SizedBox(width: 32, height: 16),
-                                      Text('애매모호한 주장'),
-                                      SizedBox(width: 32, height: 16),
-                                      Text('거짓말'),
-                                    ]
-                                  ),
-                                  Text('Graph'),
+                                  Container(
+                                    height: 600,
+                                    width: double.infinity, // 세로선의 두께 설정
+                                    child: Center(
+                                      child: PieChartSample1()
+                                    )
+                                  )
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
+                      SizedBox(height: 32),
                       // Reviews
                       Container(
                         width: 1300,
@@ -714,7 +724,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 8),
+                      SizedBox(height: 32),
                       // Review List
                       // You can use productReviews to build a ListView of reviews
                       // Assuming productReviews is a List<dynamic>
@@ -726,6 +736,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                               children: [
                                 Expanded(
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
@@ -733,17 +744,101 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                           // User Icon and Name
                                           CircleAvatar(
                                             // Assuming user icon is available in the review data
+                                            radius: 24.0,
                                             backgroundImage: NetworkImage('https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png'),
                                             backgroundColor: Colors.white,
                                           ),
                                           SizedBox(width: 8),
-                                          Text(review['name']),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(review['name'], style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                )
+                                              ),
+                                              Text(' ', style: TextStyle(
+                                                  fontSize: 5,
+                                                )
+                                              ),
+                                              Row(
+                                                children: [
+                                                  if (review['checklists'][0] == 1)
+                                                    if (review['checklists'][1] == 0 && review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                      Text('증거 불충분', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                    else
+                                                      Text('증거 불충분 | ', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                  ,if (review['checklists'][1] == 1)
+                                                    if (review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                      Text('부적절한 인증 라벨', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                    else
+                                                      Text('부적절한 인증 라벨 | ', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                  ,if (review['checklists'][2] == 1)
+                                                    if (review['checklists'][3] == 0)
+                                                      Text('애매모호한 주장', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                    else
+                                                      Text('애매모호한 주장 | ', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                  ,if (review['checklists'][3] == 1)
+                                                    Text('거짓말', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                  ,if (review['checklists'][0] == 0 && review['checklists'][1] == 0 && review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                    Text('해당사항 없음', style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Color(0xff1a5545),
+                                                        )
+                                                      )
+                                                ],
+                                              ),
+                                            ]
+                                          ),
                                         ],
                                       ),
-                                      Text('Checklists: ${review['checklists']}'),
-                                      Text('Content: ${review['content']}'),
+                                      SizedBox(height: 32),
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 56),
+                                          Text('${review['content']}', style: TextStyle(
+                                              fontSize: 18,
+                                            )
+                                          )
+                                        ]
+                                      ),
                                       // Add X Button here for review deletion
-                                      SizedBox(height: 16),
+                                      SizedBox(height: 20),
+                                      Container(
+                                        height: 0.08,
+                                        width: double.infinity, // 세로선의 두께 설정
+                                        color: Color(0xFFDCDCDC), // 세로선의 색상 설정
+                                      ),
+                                      SizedBox(height: 20),
                                     ],
                                   ),
                                 )
@@ -760,12 +855,36 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                       ),
                       SizedBox(height: 16),
                       // Write Review Button
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle Write Review button click
-                        },
-                        child: Text('Write Review'),
+                      Container(
+                        width: 1300,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(width:16)
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Handle Purchase button click
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Color(0xff19583E), // 배경색
+                                onPrimary: Color(0xff19583E), // 텍스트 및 아이콘 색상
+                                side: BorderSide(color: Color(0xff19583E)), // 테두리 색상 및 너비
+                                minimumSize: Size(130, 58),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100.0), // 모서리를 둥글게 하는 정도를 지정
+                                ),
+                              ),
+                              child: Text('리뷰 작성', style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                )
+                              ),
+                            )
+                          ]
+                        ),
                       ),
+                      SizedBox(height: 32),
                     ],
                   );
                 }
@@ -777,6 +896,200 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
     );
   }
 
+}
+
+class PieChartSample1 extends StatefulWidget {
+  const PieChartSample1({super.key});
+
+  @override
+  State<StatefulWidget> createState() => PieChartSample1State();
+}
+
+class PieChartSample1State extends State<PieChartSample1> {
+  int touchedIndex = -1;
+  int tempIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          const SizedBox(
+            height: 28,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Indicator(
+                color: Color(0xFFe9ec85), // 대체 색상 값
+                text: '증거 불충분',
+                isSquare: true,
+                size: tempIndex == 0 ? 11 : 10,
+                textColor: tempIndex == 0 ? Colors.black : Colors.grey,
+              ),
+              Indicator(
+                color: Color(0xFF7cc9af), // 대체 색상 값
+                text: '부적절한 인증 라벨',
+                isSquare: true,
+                size: tempIndex == 1 ? 11 : 10,
+                textColor: tempIndex == 1 ? Colors.black : Colors.grey,
+              ),
+              Indicator(
+                color: Color(0xFFfeb59c), // 대체 색상 값
+                text: '애매모호한 주장',
+                isSquare: true,
+                size: tempIndex == 2 ? 11 : 10,
+                textColor: tempIndex == 2 ? Colors.black : Colors.grey,
+              ),
+              Indicator(
+                color: Color(0xFF9e9ac9), // 대체 색상 값
+                text: '거짓말',
+                isSquare: true,
+                size: tempIndex == 3 ? 11 : 10,
+                textColor: tempIndex == 3 ? Colors.black : Colors.grey,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 70,
+          ),
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] == 0) ? Container() : PieChart(
+                PieChartData(
+                  startDegreeOffset: 180,
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 1,
+                  centerSpaceRadius: 150,
+                  sections: showingSections(),
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          tempIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<PieChartSectionData> showingSections() {
+    return List.generate(
+      4,
+      (i) {
+        tempIndex = touchedIndex;
+        if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          tempIndex = touchedIndex + 1;
+        }
+        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          if (touchedIndex > 0) {
+            tempIndex = touchedIndex + 1;
+          }
+        }
+        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          if (touchedIndex > 1) {
+            tempIndex = touchedIndex +1;
+          }
+        }
+        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          tempIndex = touchedIndex + 2;
+        }
+        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          if (touchedIndex > 0) {
+            tempIndex = touchedIndex + 2;
+          }
+        }
+        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          if (touchedIndex == 0) {
+            tempIndex = touchedIndex + 1;
+          }
+          else {
+            tempIndex = touchedIndex + 2;
+          }
+        }
+        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+          tempIndex = touchedIndex + 3;
+        }
+        final isTouched = i == tempIndex;
+        if (i == 0 && context.read<GlobalStore>().checklists[0] != 0) {
+          return PieChartSectionData(
+            color: isTouched ? Color(0xffFAFA4A) : Color(0xFFe9ec85), // 대체 색상 값
+            value: context.read<GlobalStore>().checklists[0],
+            title: '',
+            radius: 140,
+            titlePositionPercentageOffset: 0.55,
+            borderSide: isTouched
+                ? const BorderSide(
+                    color: Colors.white, width: 2)
+                : BorderSide(color: Colors.white, width: 4),
+          );
+        }
+        if (i == 1 && context.read<GlobalStore>().checklists[1] != 0) {
+          return PieChartSectionData(
+            color: isTouched ? Color(0xff4dd7a4) : Color(0xFF7cc9af), // 대체 색상 값
+            value: context.read<GlobalStore>().checklists[1],
+            title: '',
+            radius: 140,
+            titlePositionPercentageOffset: 0.55,
+            borderSide: isTouched
+                ? const BorderSide(
+                    color: Colors.white, width: 2)
+                : BorderSide(color: Colors.white, width: 4),
+          );
+        }
+        if (i == 2 && context.read<GlobalStore>().checklists[2] != 0) {
+          return PieChartSectionData(
+            color: isTouched ? Color(0xfffe9772) : Color(0xFFfeb59c), // 대체 색상 값
+            value: context.read<GlobalStore>().checklists[2],
+            title: '',
+            radius: 140,
+            titlePositionPercentageOffset: 0.6,
+            borderSide: isTouched
+                ? const BorderSide(
+                    color: Colors.white, width: 2)
+                : BorderSide(color: Colors.white, width: 4),
+          );
+        }
+        if (i == 3 && context.read<GlobalStore>().checklists[3] != 0) {
+          return PieChartSectionData(
+            color: isTouched ? Color(0xff8274cb) : Color(0xFF9e9ac9), // 대체 색상 값
+            value: context.read<GlobalStore>().checklists[3],
+            title: '',
+            radius: 140,
+            titlePositionPercentageOffset: 0.55,
+            borderSide: isTouched
+                ? const BorderSide(
+                    color: Colors.white, width: 2)
+                : BorderSide(color: Colors.white, width: 4),
+          );
+        }
+        return PieChartSectionData(
+          color: Colors.transparent,  // 또는 적절한 기본값 설정
+          value: 0,  // 또는 적절한 기본값 설정
+          title: '',
+          radius: 0,
+          titlePositionPercentageOffset: 0,
+          borderSide: BorderSide.none,
+        );
+      },
+    );
+  }
 }
 
 class PageNavigation extends StatelessWidget {
@@ -838,6 +1151,20 @@ class Product {
   });
 }
 
+class CustomPieChartSectionData {
+  final double value;
+  final Color color;
+  final String title;
+  final double radius;
+
+  CustomPieChartSectionData({
+    required this.value,
+    required this.color,
+    required this.title,
+    required this.radius,
+  });
+}
+
 class GlobalStore extends ChangeNotifier{
   List<Product> products = [];
   int currentPage = 1;
@@ -845,6 +1172,7 @@ class GlobalStore extends ChangeNotifier{
   bool _isDetail = false;
   bool _isHover = false;
   bool _pageChangeDetect = false;
+  List<double> checklists = [1.0, 1.0, 1.0, 1.0];
 }
 
 Future<List<Product>> fetchProducts(String searchword) async {
@@ -874,5 +1202,48 @@ Future<List<Product>> fetchProducts(String searchword) async {
     return products;
   } else {
     throw Exception('Failed to load products');
+  }
+}
+
+class Indicator extends StatelessWidget {
+  const Indicator({
+    super.key,
+    required this.color,
+    required this.text,
+    required this.isSquare,
+    this.size = 16,
+    this.textColor,
+  });
+  final Color color;
+  final String text;
+  final bool isSquare;
+  final double size;
+  final Color? textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Container(
+          width: size * 4,
+          height: size * 1,
+          decoration: BoxDecoration(
+            shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.normal,
+            color: textColor,
+          ),
+        )
+      ],
+    );
   }
 }
