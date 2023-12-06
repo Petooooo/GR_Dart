@@ -122,6 +122,7 @@ class _WholeScreenState extends State<WholeScreen> {
                       setState(() {});
                       if (context.read<GlobalStore>().isDialogOpen || context.read<GlobalStore>().reviewPageChange) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Provider.of<GlobalStore>(context, listen: false)._scrollValue = _scrollController.position.maxScrollExtent;
                           _scrollController.jumpTo(scrollPosition + 1000);
                         });
                         Provider.of<GlobalStore>(context, listen: false).reviewPageChange = false;
@@ -149,6 +150,7 @@ class _WholeScreenState extends State<WholeScreen> {
                 // ... (이후 코드 추가)
                 setState(() {});
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Provider.of<GlobalStore>(context, listen: false)._scrollValue = _scrollController.position.maxScrollExtent;
                   _scrollController.jumpTo(scrollPosition + 1000);
                 });
               },
@@ -162,7 +164,7 @@ class _WholeScreenState extends State<WholeScreen> {
 class DialogContainer extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController passwordController;
-  final List<int?> checklists;
+  List<int?> checklists = [0, 0, 0, 0];
   final TextEditingController contentController;
   final ScrollController scrollController;
   final double scrollPosition;
@@ -194,8 +196,17 @@ class _DialogContainerState extends State<DialogContainer> {
           onTap: () {
             Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
             Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+
+            // Clear the text field controllers
+            widget.nameController.clear();
+            widget.passwordController.clear();
+            widget.contentController.clear();
+            widget.checklists[0] = 0;
+            widget.checklists[1] = 0;
+            widget.checklists[2] = 0;
+            widget.checklists[3] = 0;
+
             // Call the onPageUpdate callback
-            setState(() {});
             widget.onPageUpdate();
           },
           child: Container(
@@ -206,59 +217,226 @@ class _DialogContainerState extends State<DialogContainer> {
         ),
         Center(
           child: Container(
-            width: 800,
+            width: 450,
             height: 600,
-            child: Card(
-              margin: EdgeInsets.all(20.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: widget.nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
-                    ),
-                    TextField(
-                      controller: widget.passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(labelText: 'Password'),
-                    ),
-                    for (int i = 0; i < widget.checklists.length; i++)
-                      CheckboxListTile(
-                        value: widget.checklists[i] == 1,
-                        onChanged: (value) {
-                          setState(() {
-                            widget.checklists[i] = value == true ? 1 : 0;
-                          });
-                        },
-                        title: Text('Checkbox $i'),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100.0),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('작성자', style: TextStyle(
+                          fontSize: 25,
+                          color: Color(0xff1a5545),
+                          fontWeight: FontWeight.bold,
+                        )
                       ),
-                    TextField(
-                      controller: widget.contentController,
-                      decoration: InputDecoration(labelText: 'Content'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // Use Provider to update the state
-                        widget.fetchDataAndSubmit();
-                        Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
-                        Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
-                        // Call the onPageUpdate callback
-                        widget.onPageUpdate();
-                      },
-                      child: Text('Submit'),
-                    ),
-                  ],
-                ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: TextField(
+                                controller: widget.nameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Name',
+                                  contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 20.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xfff37cd5), width: 3.5),
+                                  ),
+                                  // Remove the labelText when focused
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                ),
+                                style: TextStyle(fontSize: 20.0),
+                              )
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Container(
+                              child: TextField(
+                                controller: widget.passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: 'Password',
+                                  contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 20.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderSide: BorderSide(color: Color(0xfff37cd5), width: 3.5),
+                                  ),
+                                  // Remove the labelText when focused
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                ),
+                                style: TextStyle(fontSize: 20.0),
+                              )
+                            )
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('그린워싱 유형', style: TextStyle(
+                          fontSize: 25,
+                          color: Color(0xff1a5545),
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
+                      SizedBox(height: 20),
+                      _buildCustomCheckbox('증거 불충분', 0),
+                      _buildCustomCheckbox('부적절한 인증 라벨', 1),
+                      _buildCustomCheckbox('애매모호한 주장', 2),
+                      _buildCustomCheckbox('거짓말', 3),
+                    ]
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('리뷰', style: TextStyle(
+                          fontSize: 25,
+                          color: Color(0xff1a5545),
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
+                      SizedBox(height: 20),
+                      TextField(
+                        controller: widget.contentController,
+                        onSubmitted: (value) {
+                          if (widget.nameController.text != "" && widget.passwordController.text != "" && widget.contentController.text != "") {
+                            // Use Provider to update the state
+                            widget.fetchDataAndSubmit();
+                            Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
+                            Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+
+                            // Clear the text field controllers
+                            widget.nameController.clear();
+                            widget.passwordController.clear();
+                            widget.contentController.clear();
+                            widget.checklists[0] = 0;
+                            widget.checklists[1] = 0;
+                            widget.checklists[2] = 0;
+                            widget.checklists[3] = 0;
+
+                            // Call the onPageUpdate callback
+                            widget.onPageUpdate();
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Content',
+                          contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 20.0),
+                          suffixIcon: InkWell(
+                            onTap: () async {
+                              if (widget.nameController.text != "" && widget.passwordController.text != "" && widget.contentController.text != "") {
+                                // Use Provider to update the state
+                                widget.fetchDataAndSubmit();
+                                Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
+                                Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+
+                                // Clear the text field controllers
+                                widget.nameController.clear();
+                                widget.passwordController.clear();
+                                widget.contentController.clear();
+                                widget.checklists[0] = 0;
+                                widget.checklists[1] = 0;
+                                widget.checklists[2] = 0;
+                                widget.checklists[3] = 0;
+
+                                // Call the onPageUpdate callback
+                                widget.onPageUpdate();
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('작성    ', style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xff19583E))
+                                  )
+                                ]
+                              )
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                            borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                            borderSide: BorderSide(color: Color(0xff19583E), width: 3),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                            borderSide: BorderSide(color: Color(0xfff37cd5), width: 3.5),
+                          ),
+                          // Remove the labelText when focused
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        ),
+                        style: TextStyle(fontSize: 20.0),
+                      )
+                    ]
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomCheckbox(String title, int index) {
+    return Row(
+      children: [
+        Checkbox(
+          value: widget.checklists[index] == 1,
+          onChanged: (value) {
+            setState(() {
+              widget.checklists[index] = value == true ? 1 : 0;
+            });
+          },
+          activeColor: Color(0xfffb4e9f),
+        ),
+        Text(title, style: TextStyle(
+            fontSize: 20,
           )
         ),
-      ]
+      ],
     );
   }
 }
+
+
 
 class SearchBarWidget extends StatefulWidget {
   final VoidCallback onSearchResultUpdate;
@@ -875,7 +1053,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                     height: 600,
                                     width: double.infinity, // 세로선의 두께 설정
                                     child: Center(
-                                      child: PieChartSample1()
+                                      child: DonutChart()
                                     )
                                   )
                                 ],
@@ -916,7 +1094,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 32),
+                      SizedBox(height: 60),
                       // Review List
                       // You can use productReviews to build a ListView of reviews
                       // Assuming productReviews is a List<dynamic>
@@ -1040,7 +1218,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                       // Page Navigation for Reviews
                       PageNavigation(
                         currentPage: context.read<GlobalStore>().reviewPage,
-                        totalPages: (productReviews!.length) ~/ 5 + 1,
+                        totalPages: (productReviews!.length - 1) ~/ 5 + 1,
                         onPageChanged: (page) {
                           // print("-----Detetct-@@---${page}");
                           if(page != context.read<GlobalStore>().reviewPage) {
@@ -1101,14 +1279,14 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
   }
 }
 
-class PieChartSample1 extends StatefulWidget {
-  const PieChartSample1({super.key});
+class DonutChart extends StatefulWidget {
+  const DonutChart({super.key});
 
   @override
-  State<StatefulWidget> createState() => PieChartSample1State();
+  State<StatefulWidget> createState() => DonutChartState();
 }
 
-class PieChartSample1State extends State<PieChartSample1> {
+class DonutChartState extends State<DonutChart> {
   int touchedIndex = -1;
   int tempIndex = -1;
 
