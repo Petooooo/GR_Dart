@@ -22,7 +22,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: WholeScreen(),
+        body: Stack(
+          children: [
+            WholeScreen(),
+          ]
+        )
       ),
     );
   }
@@ -34,44 +38,224 @@ class WholeScreen extends StatefulWidget {
 }
 
 class _WholeScreenState extends State<WholeScreen> {
-  // Add ScrollController
   ScrollController _scrollController = ScrollController();
+  double scrollPosition = 0.0;
+  bool isDone = false;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController contentController = TextEditingController();
+  List<int?> checklists = [0, 0, 0, 0];
+
+  Future<void> fetchDataAndSubmit() async {
+    final url = 'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/review/write';
+    final data = {
+      'id': context.read<GlobalStore>().detail_id,
+      'name': nameController.text,
+      'password': passwordController.text,
+      'checklists': checklists,
+      'content': contentController.text,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      // Handle the response
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollUpdateNotification) {
+          if (context.read<GlobalStore>().isDialogOpen && scrollPosition < 100) {
+            Provider.of<GlobalStore>(context, listen: false)._scrollValue = scrollPosition;
+            _scrollController.jumpTo(scrollPosition);
+          } else {
+            scrollPosition = notification.metrics.pixels;
+          }
+        }
+        return true;
+      },
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              SearchBarWidget(
+                onSearchResultUpdate: () {
+                  if (!context.read<GlobalStore>().isDialogOpen) {
+                    if (context.read<GlobalStore>()._pageChangeDetect == true) {
+                      _scrollController.jumpTo(0.0);
+                      Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = false;
+                    } else {
+                      _scrollController.animateTo(0, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                    }
+                  } else {
+                    _scrollController.jumpTo(scrollPosition);
+                  }
+                },
+              ),
+              Expanded(
+                child: ProductList(
+                  pageItemNumber: 10,
+                  scrollController: _scrollController,
+                  onPageUpdate: () {
+                    if (!context.read<GlobalStore>().goReview) {
+                      if (!context.read<GlobalStore>().isDialogOpen) {
+                        if (context.read<GlobalStore>()._pageChangeDetect == true) {
+                          _scrollController.jumpTo(0.0);
+                          Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = false;
+                        } else {
+                          _scrollController.animateTo(0, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                        }
+                      } else {
+                        _scrollController.jumpTo(scrollPosition);
+                      }
+                      setState(() {});
+                      if (context.read<GlobalStore>().isDialogOpen || context.read<GlobalStore>().reviewPageChange) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _scrollController.jumpTo(scrollPosition + 1000);
+                        });
+                        Provider.of<GlobalStore>(context, listen: false).reviewPageChange = false;
+                      }
+                    }
+                    else {
+                      Provider.of<GlobalStore>(context, listen: false).goReview = false;
+                      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          if (context.read<GlobalStore>().isDialogOpen) 
+            DialogContainer(
+              nameController: nameController,
+              passwordController: passwordController,
+              checklists: checklists,
+              contentController: contentController,
+              scrollController: _scrollController,
+              scrollPosition: scrollPosition,
+              fetchDataAndSubmit: fetchDataAndSubmit,
+              onPageUpdate: () {
+                // ... (이후 코드 추가)
+                setState(() {});
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollController.jumpTo(scrollPosition + 1000);
+                });
+              },
+            ),
+        ]
+      ),
+    );
+  }    
+}
+
+class DialogContainer extends StatefulWidget {
+  final TextEditingController nameController;
+  final TextEditingController passwordController;
+  final List<int?> checklists;
+  final TextEditingController contentController;
+  final ScrollController scrollController;
+  final double scrollPosition;
+  final Function fetchDataAndSubmit;
+
+  final VoidCallback onPageUpdate; // Add this line
+
+  DialogContainer({
+    required this.nameController,
+    required this.passwordController,
+    required this.checklists,
+    required this.contentController,
+    required this.scrollController,
+    required this.scrollPosition,
+    required this.fetchDataAndSubmit,
+    required this.onPageUpdate, // Add this line
+  });
+
+  @override
+  _DialogContainerState createState() => _DialogContainerState();
+}
+
+class _DialogContainerState extends State<DialogContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
       children: [
-        SearchBarWidget(
-          onSearchResultUpdate: () {
-            // Scroll to top when search result updates
-            if (context.read<GlobalStore>()._pageChangeDetect == true) {
-              _scrollController.jumpTo(0.0);
-              Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = false;
-            }
-            else {
-              _scrollController.animateTo(0, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-            }
+        GestureDetector(
+          onTap: () {
+            Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
+            Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+            // Call the onPageUpdate callback
             setState(() {});
+            widget.onPageUpdate();
           },
-        ),
-        Expanded(
-          child: ProductList(
-            pageItemNumber: 10,
-            scrollController: _scrollController, // Pass the ScrollController to ProductList
-            onPageUpdate: () {
-              // 페이지가 업데이트될 때 맨 위로 스크롤
-              if (context.read<GlobalStore>()._pageChangeDetect == true) {
-                _scrollController.jumpTo(0.0);
-                Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = false;
-              }
-              else {
-                _scrollController.animateTo(0, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
-              }
-              setState(() {});
-            },
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(0.65),
           ),
         ),
-      ],
+        Center(
+          child: Container(
+            width: 800,
+            height: 600,
+            child: Card(
+              margin: EdgeInsets.all(20.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: widget.nameController,
+                      decoration: InputDecoration(labelText: 'Name'),
+                    ),
+                    TextField(
+                      controller: widget.passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(labelText: 'Password'),
+                    ),
+                    for (int i = 0; i < widget.checklists.length; i++)
+                      CheckboxListTile(
+                        value: widget.checklists[i] == 1,
+                        onChanged: (value) {
+                          setState(() {
+                            widget.checklists[i] = value == true ? 1 : 0;
+                          });
+                        },
+                        title: Text('Checkbox $i'),
+                      ),
+                    TextField(
+                      controller: widget.contentController,
+                      decoration: InputDecoration(labelText: 'Content'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Use Provider to update the state
+                        widget.fetchDataAndSubmit();
+                        Provider.of<GlobalStore>(context, listen: false).isDialogOpen = false;
+                        Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+                        // Call the onPageUpdate callback
+                        widget.onPageUpdate();
+                      },
+                      child: Text('Submit'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ),
+      ]
     );
   }
 }
@@ -156,6 +340,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> with ChangeNotifier {
     fetchProducts(searchword).then((List<Product> fetchedProducts) {
       Provider.of<GlobalStore>(context, listen: false).products = fetchedProducts;
       Provider.of<GlobalStore>(context, listen: false).currentPage = 1;
+      Provider.of<GlobalStore>(context, listen: false).reviewPage = 1;
       if (context.read<GlobalStore>()._isDetail == true) {
         Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = true;
         Provider.of<GlobalStore>(context, listen: false)._isDetail = false;
@@ -397,6 +582,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
               productChecklists[2].toDouble(),
               productChecklists[3].toDouble()
             ];
+            Provider.of<GlobalStore>(context, listen: false).detail_id = productID;
             print(context.read<GlobalStore>().checklists);
             // productReviews를 List<dynamic>으로 선언
             List<dynamic> productReviews = [];
@@ -415,6 +601,10 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                   return Text('Data is null');
                 } else {
                   // 리뷰가 성공적으로 로딩된 경우
+                  if(!context.read<GlobalStore>().initReview) {
+                    Provider.of<GlobalStore>(context, listen: false).reviewPage = 1;
+                    Provider.of<GlobalStore>(context, listen: false).initReview = true;
+                  }
                   productReviews = json.decode(json.decode(reviewSnapshot.data!));
                   print(productReviews);
 
@@ -499,6 +689,10 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                           ElevatedButton(
                                             onPressed: () {
                                               // Handle Check Review button click
+                                              Provider.of<GlobalStore>(context, listen: false).goReview = true;
+                                              // print("-----Change-@@---${context.read<GlobalStore>().reviewPage}");
+                                              setState(() {});
+                                              widget.onPageUpdate();
                                             },
                                             style: ElevatedButton.styleFrom(
                                               primary: Colors.white, // 배경색
@@ -523,7 +717,6 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                         ),
                       ),
                       SizedBox(height: 16),
-                      /*
                       // Detail Images
                       if (productDetailPicUrls != null)
                         for (var detailPicUrl in productDetailPicUrls!)
@@ -545,7 +738,6 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                               ]
                             ),
                           ),
-                      */
                       SizedBox(height: 16),
                       Container(
                         width: 1300,
@@ -729,7 +921,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                       // You can use productReviews to build a ListView of reviews
                       // Assuming productReviews is a List<dynamic>
                       if (productReviews != null)
-                        for (var review in productReviews!)
+                        for (int i = 5 * (context.read<GlobalStore>().reviewPage - 1); i < productReviews!.length && i < 5 * (context.read<GlobalStore>().reviewPage); i++)
                           Container(
                             width: 1300,
                             child: Row(
@@ -753,7 +945,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(review['name'], style: TextStyle(
+                                              Text(productReviews[i]['name'], style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
                                                 )
@@ -764,8 +956,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               ),
                                               Row(
                                                 children: [
-                                                  if (review['checklists'][0] == 1)
-                                                    if (review['checklists'][1] == 0 && review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                  if (productReviews[i]['checklists'][0] == 1)
+                                                    if (productReviews[i]['checklists'][1] == 0 && productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                       Text('증거 불충분', style: TextStyle(
                                                           fontSize: 16,
                                                           color: Color(0xff1a5545),
@@ -777,8 +969,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
-                                                  ,if (review['checklists'][1] == 1)
-                                                    if (review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                  ,if (productReviews[i]['checklists'][1] == 1)
+                                                    if (productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                       Text('부적절한 인증 라벨', style: TextStyle(
                                                           fontSize: 16,
                                                           color: Color(0xff1a5545),
@@ -790,8 +982,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
-                                                  ,if (review['checklists'][2] == 1)
-                                                    if (review['checklists'][3] == 0)
+                                                  ,if (productReviews[i]['checklists'][2] == 1)
+                                                    if (productReviews[i]['checklists'][3] == 0)
                                                       Text('애매모호한 주장', style: TextStyle(
                                                           fontSize: 16,
                                                           color: Color(0xff1a5545),
@@ -803,13 +995,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
-                                                  ,if (review['checklists'][3] == 1)
+                                                  ,if (productReviews[i]['checklists'][3] == 1)
                                                     Text('거짓말', style: TextStyle(
                                                           fontSize: 16,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
-                                                  ,if (review['checklists'][0] == 0 && review['checklists'][1] == 0 && review['checklists'][2] == 0 && review['checklists'][3] == 0)
+                                                  ,if (productReviews[i]['checklists'][0] == 0 && productReviews[i]['checklists'][1] == 0 && productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                     Text('해당사항 없음', style: TextStyle(
                                                           fontSize: 16,
                                                           color: Color(0xff1a5545),
@@ -825,7 +1017,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                       Row(
                                         children: [
                                           SizedBox(width: 56),
-                                          Text('${review['content']}', style: TextStyle(
+                                          Text('${productReviews[i]['content']}', style: TextStyle(
                                               fontSize: 18,
                                             )
                                           )
@@ -847,10 +1039,17 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ),
                       // Page Navigation for Reviews
                       PageNavigation(
-                        currentPage: 1, // Assuming you will manage the current page
-                        totalPages: 5, // Assuming you know the total number of review pages
+                        currentPage: context.read<GlobalStore>().reviewPage,
+                        totalPages: (productReviews!.length) ~/ 5 + 1,
                         onPageChanged: (page) {
-                          // Handle page change
+                          // print("-----Detetct-@@---${page}");
+                          if(page != context.read<GlobalStore>().reviewPage) {
+                            Provider.of<GlobalStore>(context, listen: false).reviewPage = page;
+                            Provider.of<GlobalStore>(context, listen: false).reviewPageChange = true;
+                            // print("-----Change-@@---${context.read<GlobalStore>().reviewPage}");
+                            setState(() {});
+                            widget.onPageUpdate();
+                          }
                         },
                       ),
                       SizedBox(height: 16),
@@ -865,6 +1064,11 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                             ElevatedButton(
                               onPressed: () {
                                 // Handle Purchase button click
+                                if (!context.read<GlobalStore>().isDialogOpen) {
+                                  print("Open");
+                                  Provider.of<GlobalStore>(context, listen: false).isDialogOpen = true;
+                                  widget.onPageUpdate();
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 primary: Color(0xff19583E), // 배경색
@@ -895,7 +1099,6 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
       ),
     );
   }
-
 }
 
 class PieChartSample1 extends StatefulWidget {
@@ -1093,7 +1296,7 @@ class PieChartSample1State extends State<PieChartSample1> {
 }
 
 class PageNavigation extends StatelessWidget {
-  final int currentPage;
+  int currentPage;
   final int totalPages;
   final ValueChanged<int> onPageChanged;
 
@@ -1103,8 +1306,16 @@ class PageNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     const int maxVisiblePages = 7;
 
-    int startPage = max(1, min(currentPage - (maxVisiblePages ~/ 2), totalPages - maxVisiblePages + 1));
-    int endPage = min(totalPages, startPage + maxVisiblePages - 1);
+    int startPage = 0;
+    int endPage = 0;
+    if (context.read<GlobalStore>()._isDetail) {
+      startPage = max(1, min(context.read<GlobalStore>().reviewPage - (maxVisiblePages ~/ 2), totalPages - maxVisiblePages + 1));
+      endPage = min(totalPages, startPage + maxVisiblePages - 1);
+    }
+    else {
+      startPage = max(1, min(currentPage - (maxVisiblePages ~/ 2), totalPages - maxVisiblePages + 1));
+      endPage = min(totalPages, startPage + maxVisiblePages - 1);
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -1113,14 +1324,21 @@ class PageNavigation extends StatelessWidget {
         children: [
           for (int page = startPage; page <= endPage; page++)
             GestureDetector(
-              onTap: () => onPageChanged(page),
+              onTap: () {
+                onPageChanged(page);
+                print('startpage: ${startPage}');
+                print('endpage: ${endPage}');
+                print('currentpage: ${currentPage}');
+                print('reviewpage: ${context.read<GlobalStore>().reviewPage}');
+                print('page: ${page}');
+              },
               child: Container(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
                   '$page',
                   style: TextStyle(
-                    fontSize: currentPage == page ? 18.0 : 16.0,
-                    fontWeight: currentPage == page ? FontWeight.bold : FontWeight.normal,
+                    fontSize: (currentPage == page) ? 18.0 : 16.0,
+                    fontWeight: (currentPage == page) ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -1168,11 +1386,18 @@ class CustomPieChartSectionData {
 class GlobalStore extends ChangeNotifier{
   List<Product> products = [];
   int currentPage = 1;
+  int reviewPage = 1;
   String detailID = "";
   bool _isDetail = false;
   bool _isHover = false;
   bool _pageChangeDetect = false;
   List<double> checklists = [1.0, 1.0, 1.0, 1.0];
+  bool isDialogOpen = false;
+  double _scrollValue = 0.0;
+  String detail_id = "";
+  bool reviewPageChange = false;
+  bool initReview = false;
+  bool goReview = false;
 }
 
 Future<List<Product>> fetchProducts(String searchword) async {
