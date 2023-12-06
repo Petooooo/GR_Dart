@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
@@ -64,10 +65,10 @@ class _WholeScreenState extends State<WholeScreen> {
       );
 
       // Handle the response
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
     } catch (error) {
-      print('Error: $error');
+      // print('Error: $error');
     }
   }
 
@@ -98,6 +99,7 @@ class _WholeScreenState extends State<WholeScreen> {
                     } else {
                       _scrollController.animateTo(0, duration: Duration(milliseconds: 350), curve: Curves.easeInOut);
                     }
+                    setState(() {});
                   } else {
                     _scrollController.jumpTo(scrollPosition);
                   }
@@ -560,7 +562,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
         context.read<GlobalStore>().products = updatedProducts;
       });
     } catch (e) {
-      print('제품을 가져오는 중 오류 발생: $e');
+      // print('제품을 가져오는 중 오류 발생: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -642,64 +644,120 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                     }
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32.0),
-                    child: context.read<GlobalStore>()._isDetail ? _detailScreen() : Container( 
-                      // Product List View
-                      width: 2000,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: index == 0 ? BorderSide(color: Color(0xFFDCDCDC)) : BorderSide.none,
-                          bottom: BorderSide(color: Color(0xFFDCDCDC)),
-                        ),
-                        color: (_hoveredIndex == index && context.read<GlobalStore>()._isHover == true) ? Color(0xFFF5F5F5) : Colors.transparent,
-                      ),
-                      padding: EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                            Expanded(
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 256.0,
-                                  height: 256.0,
-                                  child: Image.network(
-                                    context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].thumbnail,
-                                    width: 128.0,
-                                    height: 128.0,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].productName,
-                                          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].vendor}'),
-                                        SizedBox(height: 32),
-                                        Text('Reviews: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].reviewCount}'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                    padding: EdgeInsets.symmetric(horizontal: 32.0), // Padding Box
+                    child: context.read<GlobalStore>()._isDetail ? _detailScreen() : Column(
+                      children: [
+                        Container( 
+                          // Product List View
+                          width: 2000,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              top: index == 0 ? BorderSide(color: Color(0xFFDCDCDC)) : BorderSide.none,
+                              bottom: BorderSide(color: Color(0xFFDCDCDC)),
+                            ),
+                            color: (_hoveredIndex == index && context.read<GlobalStore>()._isHover == true) ? Color(0xFFF5F5F5) : Colors.transparent,
+                          ),
+                          padding: EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('State: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state}'),
-                                    Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].price.toStringAsFixed(0)}￦'),
+                                    Container(
+                                      width: 256.0,
+                                      height: 256.0,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Color(0xFF808080),
+                                          width: 1.0,          
+                                        ),
+                                      ),
+                                      child: Image.network(
+                                        context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].thumbnail,
+                                        width: 128.0,
+                                        height: 128.0,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 45.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(height: 20.0),
+                                            Text(context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].productName,
+                                              style: TextStyle(
+                                              fontSize: 28,
+                                              )
+                                            ),
+                                            SizedBox(height: 24.0),
+                                            Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].vendor}',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.grey, 
+                                              )
+                                            ),
+                                            SizedBox(height: 90),
+                                            Text('리뷰 수: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].reviewCount}',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Color(0xff469174),
+                                              )
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 256,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                  width: 40.0,
+                                                  height: 40.0,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state == 0 ? Color(0xffb4b4b4) :
+                                                           context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state == 1 ? Color(0xffc5d7b0) :
+                                                           context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state == 2 ? Color(0xfff1e370) :
+                                                           context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state == 3 ? Color(0xfffea7a7) : Color(0xffFFFFFF),
+                                                  ),
+                                                )
+                                              ]
+                                            )
+                                          ),
+                                          SizedBox(height:15),
+                                          SizedBox(height:15),
+                                          Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].price}원',
+                                            style: TextStyle(
+                                              fontSize: 32,
+                                              color: Color(0xffa1b87e),
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ]
-                      )
-                    ),
+                              ),
+                            ]
+                          )
+                        ),
+                      ]
+                    )
                   ),
                 ),            
               );
@@ -748,8 +806,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
             var productID = detailJson['id'];
             var productName = detailJson['name'];
             var productVendor = detailJson['vendor'];
-            var productPrice = detailJson['price'];
-            var productDeliveryFee = detailJson['deliveryFee'];
+            var productPrice = translatePrice(detailJson['price']);
+            var productDeliveryFee = translatePrice(detailJson['deliveryFee']);
             var productPicUrl = detailJson['picUrl'];
             var productOriginalUrl = detailJson['originalUrl'];
             var productDetailPicUrls = detailJson['detailpicUrl'];
@@ -761,7 +819,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
               productChecklists[3].toDouble()
             ];
             Provider.of<GlobalStore>(context, listen: false).detail_id = productID;
-            print(context.read<GlobalStore>().checklists);
+            // print(context.read<GlobalStore>().checklists);
             // productReviews를 List<dynamic>으로 선언
             List<dynamic> productReviews = [];
 
@@ -784,7 +842,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                     Provider.of<GlobalStore>(context, listen: false).initReview = true;
                   }
                   productReviews = json.decode(json.decode(reviewSnapshot.data!));
-                  print(productReviews);
+                  // print(productReviews);
 
                   // 이제 로딩된 데이터를 포함한 Column을 반환할 수 있습니다.
                   return Column(
@@ -848,8 +906,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () {
+                                            onPressed: () async {
                                               // Handle Purchase button click
+                                              if (await canLaunch(productOriginalUrl)) {
+                                                await launch(productOriginalUrl);
+                                              } else {
+                                                throw 'Could not launch $productOriginalUrl';
+                                              }
                                             },
                                             style: ElevatedButton.styleFrom(
                                               primary: Color(0xffbfd0a6), // 배경색
@@ -1243,7 +1306,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                               onPressed: () {
                                 // Handle Purchase button click
                                 if (!context.read<GlobalStore>().isDialogOpen) {
-                                  print("Open");
+                                  // print("Open");
                                   Provider.of<GlobalStore>(context, listen: false).isDialogOpen = true;
                                   widget.onPageUpdate();
                                 }
@@ -1412,7 +1475,11 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xffFAFA4A) : Color(0xFFe9ec85), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[0],
-            title: '',
+            title: isTouched ? context.read<GlobalStore>().checklists[0].toString() : '',
+            titleStyle: TextStyle(
+              fontSize: 25,
+              color: Colors.grey,
+            ),
             radius: 140,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
@@ -1425,7 +1492,11 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xff4dd7a4) : Color(0xFF7cc9af), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[1],
-            title: '',
+            title: isTouched ? context.read<GlobalStore>().checklists[1].toString() : '',
+            titleStyle: TextStyle(
+              fontSize: 25,
+              color: Color(0xffFFFFFF),
+            ),
             radius: 140,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
@@ -1438,7 +1509,11 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xfffe9772) : Color(0xFFfeb59c), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[2],
-            title: '',
+            title: isTouched ? context.read<GlobalStore>().checklists[2].toString() : '',
+            titleStyle: TextStyle(
+              fontSize: 25,
+              color: Color(0xffFFFFFF),
+            ),
             radius: 140,
             titlePositionPercentageOffset: 0.6,
             borderSide: isTouched
@@ -1451,7 +1526,11 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xff8274cb) : Color(0xFF9e9ac9), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[3],
-            title: '',
+            title: isTouched ? context.read<GlobalStore>().checklists[3].toString() : '',
+            titleStyle: TextStyle(
+              fontSize: 25,
+              color: Color(0xffFFFFFF),
+            ),
             radius: 140,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
@@ -1463,7 +1542,11 @@ class DonutChartState extends State<DonutChart> {
         return PieChartSectionData(
           color: Colors.transparent,  // 또는 적절한 기본값 설정
           value: 0,  // 또는 적절한 기본값 설정
-          title: '',
+          title: isTouched ? '32' : '',
+            titleStyle: TextStyle(
+              fontSize: 25,
+              color: Color(0xffFFFFFF),
+            ),
           radius: 0,
           titlePositionPercentageOffset: 0,
           borderSide: BorderSide.none,
@@ -1504,11 +1587,11 @@ class PageNavigation extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 onPageChanged(page);
-                print('startpage: ${startPage}');
-                print('endpage: ${endPage}');
-                print('currentpage: ${currentPage}');
-                print('reviewpage: ${context.read<GlobalStore>().reviewPage}');
-                print('page: ${page}');
+                // print('startpage: ${startPage}');
+                // print('endpage: ${endPage}');
+                // print('currentpage: ${currentPage}');
+                // print('reviewpage: ${context.read<GlobalStore>().reviewPage}');
+                // print('page: ${page}');
               },
               child: Container(
                 padding: EdgeInsets.all(8.0),
@@ -1534,7 +1617,7 @@ class Product {
   final String thumbnail;
   final int reviewCount;
   final int state;
-  final double price;
+  final String price;
 
   Product({
     required this.productID,
@@ -1579,18 +1662,32 @@ class GlobalStore extends ChangeNotifier{
 }
 
 Future<List<Product>> fetchProducts(String searchword) async {
-  print('Search Word: ${searchword}');
+  // print('Search Word: ${searchword}');
   String url =
       'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/search?searchword=$searchword&page=1&size=100';
-  print(url);
+  // print(url);
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {
     final List<dynamic> responseData = json.decode(response.body);
     List<Product> products = responseData.map((data) {
-      int state = 0;
+      int state = 0; // Grey
       int reviewCount = int.tryParse(data['reviewer']) ?? 0;
-      double price = double.tryParse(data['price']) ?? 0.0;
+      String price = translatePrice(data['price']);
+      if (reviewCount > 0) {
+        var checklist = json.decode(data['checklists']);
+        var warnValue = (checklist[0] + checklist[1] + checklist[2] + checklist[3]) / (reviewCount * 4);
+        if (warnValue < 0.25) { 
+          state = 1; // Green
+        }
+        else if (warnValue < 0.6) { 
+          state = 2; // Yellow
+        }
+        else {
+          state = 3; // Red
+        }
+      }
+
       return Product(
         productID: data['id'],
         productName: data['name'],
@@ -1649,4 +1746,25 @@ class Indicator extends StatelessWidget {
       ],
     );
   }
+}
+
+// 23456789 -> 23,456,789 (가격에 구분자 추가))
+String translatePrice(String inputString) {
+  StringBuffer middleBuffer = StringBuffer();
+  StringBuffer resultBuffer = StringBuffer();
+  int j = 0;
+  for (int i = inputString.length-1; i >= 0 ; i--) {
+    middleBuffer.write(inputString[i]);
+    if (j == 2 && i != 0) {
+      middleBuffer.write(',');
+    }
+    j = (j + 1) % 3;
+  }
+  String middleString = middleBuffer.toString();
+
+  // Reverse
+  for (int i = middleString.length-1; i >= 0 ; i--) {
+    resultBuffer.write(middleString[i]);
+  }
+  return resultBuffer.toString();
 }
