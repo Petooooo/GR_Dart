@@ -627,15 +627,15 @@ class _SearchBarWidgetState extends State<SearchBarWidget> with ChangeNotifier {
       width: 2000,
       child: Row(
         children: [
-          SizedBox(width: 32),
+          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 24),
           GestureDetector(
             onTap: _onLogoClick,
             child: MouseRegion(
               cursor: SystemMouseCursors.click, // Change cursor shape to indicate clickability
-              child: Image.asset('assets/logo.png', width: 128, height: 64),
+              child: Image.asset('assets/logo.png', width: MediaQuery.of(context).size.width > 800 ? 128 : 90, height: MediaQuery.of(context).size.width > 800 ? 64 : 45),
             ),
           ),
-          SizedBox(width: 32),
+          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 24),
           Expanded(
             child: TextField(
               controller: _searchController,
@@ -661,7 +661,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> with ChangeNotifier {
               ),
             ),
           ),
-          SizedBox(width: 32),
+          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 32),
         ],
       ),
     );
@@ -739,9 +739,9 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 32.0),
+                    SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 24.0),
                     Text('No Such Items'),
-                    SizedBox(height: 32.0),
+                    SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 24.0),
                     PageNavigation(
                       currentPage: 1,
                       totalPages: 1,
@@ -800,7 +800,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                     }
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32.0), // Padding Box
+                    padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 800 ? 32.0 : 8.0), // Padding Box
                     child: context.read<GlobalStore>()._isDetail ? _detailScreen() : Column(
                       children: [
                         Container( 
@@ -813,7 +813,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                             ),
                             color: (_hoveredIndex == index && context.read<GlobalStore>()._isHover == true) ? Color(0xFFF5F5F5) : Colors.transparent,
                           ),
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width > 800 ? 16.0 : 4),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,46 +823,48 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      width: 256.0,
-                                      height: 256.0,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Color(0xFF808080),
-                                          width: 1.0,          
+                                    Center(
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width > 800 ? 256.0 : 150,
+                                        height: MediaQuery.of(context).size.width > 800 ? 256.0 : 150,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Color(0xFF808080),
+                                            width: 1.0,          
+                                          ),
                                         ),
-                                      ),
-                                      child: Image.network(
-                                        context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].thumbnail,
-                                        width: 128.0,
-                                        height: 128.0,
-                                        fit: BoxFit.cover,
+                                        child: Image.network(
+                                          context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].thumbnail,
+                                          width: 128.0,
+                                          height: 128.0,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 45.0),
+                                        padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 800 ? 45.0 : 20.0),
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(height: 20.0),
+                                            SizedBox(height: MediaQuery.of(context).size.width > 800 ? 20.0 : 12),
                                             Text(context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].productName,
                                               style: TextStyle(
-                                              fontSize: 28,
+                                              fontSize: MediaQuery.of(context).size.width > 800 ? 28 : 18,
                                               )
                                             ),
-                                            SizedBox(height: 24.0),
+                                            SizedBox(height: MediaQuery.of(context).size.width > 800 ? 24.0 : 16),
                                             Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].vendor}',
                                               style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 20 : 12,
                                                 color: Colors.grey, 
                                               )
                                             ),
-                                            SizedBox(height: 90),
+                                            SizedBox(height: MediaQuery.of(context).size.width > 800 ? 90 : 35),
                                             Text('리뷰 수: ${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].reviewCount}',
                                               style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 20 : 12,
                                                 color: Color(0xff469174),
                                               )
                                             ),
@@ -871,7 +873,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                       ),
                                     ),
                                     Container(
-                                      height: 256,
+                                      height: MediaQuery.of(context).size.width > 800 ? 256 : 150,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -882,8 +884,8 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Container(
-                                                  width: 40.0,
-                                                  height: 40.0,
+                                                  width: MediaQuery.of(context).size.width > 800 ? 40.0 : 20,
+                                                  height: MediaQuery.of(context).size.width > 800 ? 40.0 : 20,
                                                   decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     color: context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].state == 0 ? Color(0xffb4b4b4) :
@@ -895,11 +897,11 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               ]
                                             )
                                           ),
-                                          SizedBox(height:15),
-                                          SizedBox(height:15),
+                                          SizedBox(height: MediaQuery.of(context).size.width > 800 ? 15 : 8),
+                                          SizedBox(height: MediaQuery.of(context).size.width > 800 ? 15 : 8),
                                           Text('${context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + index].price}원',
                                             style: TextStyle(
-                                              fontSize: 32,
+                                              fontSize: MediaQuery.of(context).size.width > 800 ? 32 : 18,
                                               color: Color(0xffa1b87e),
                                             )
                                           ),
@@ -1000,23 +1002,22 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                   productReviews = json.decode(json.decode(reviewSnapshot.data!));
                   // print(productReviews);
 
-                  // 이제 로딩된 데이터를 포함한 Column을 반환할 수 있습니다.
                   return Column(
                     children: [
                       // Top Container with Image
                       Container(
                         width: 1300, // You can adjust the height as needed
-                        height: 600, // You can adjust the height as needed
+                        height: MediaQuery.of(context).size.width > 800 ? 600 : 300, // You can adjust the height as needed
                         child: Row(
                           children: [
                             Expanded(
                               child: Image.network(
                                 detailJson['picUrl'], // Assuming 'picUrl' is the key for the image
-                                width: 600,
-                                height: 600,
+                                width: MediaQuery.of(context).size.width > 800 ? 600 : 300,
+                                height: MediaQuery.of(context).size.width > 800 ? 600 : 300,
                               ),
                             ),
-                            SizedBox(width: 16), // Adjust the spacing as needed
+                            SizedBox(width: MediaQuery.of(context).size.width > 800 ? 16 : 8), // Adjust the spacing as needed
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1026,38 +1027,41 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(productName, style: TextStyle(
-                                          fontSize: 45,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 45 : 22,
                                         )
                                       ),
                                       Text(productVendor, style: TextStyle(
-                                          fontSize: 22,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 22 : 14,
                                           color: Colors.grey, 
                                         )
                                       ),
                                       Text('리뷰 수: ${productReviews.length}', style: TextStyle(
-                                          fontSize: 22,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 22 : 14,
                                           color: Color(0xff469174),
                                         )
                                         ),
                                     ],
                                   ),
-                                  SizedBox(height: 16),
-                                  SizedBox(height: 16),
-                                  SizedBox(height: 16),
+                                  if(MediaQuery.of(context).size.width > 800) 
+                                    SizedBox(height: 16),
+                                  if(MediaQuery.of(context).size.width > 800) 
+                                    SizedBox(height: 16),
+                                  if(MediaQuery.of(context).size.width > 800) 
+                                    SizedBox(height: 16),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('배송비: ${productDeliveryFee}원', style: TextStyle(
-                                          fontSize: 23,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 23 : 12,
                                         )
                                       ),
-                                      SizedBox(height: 14),
+                                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 14 : 7),
                                       Text('${productPrice}원', style: TextStyle(
-                                          fontSize: 27,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 27 : 17,
                                           color: Color(0xffa1b87e),
                                         )
                                       ),
-                                      SizedBox(height: 32),
+                                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 16),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: [
@@ -1074,15 +1078,15 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               primary: Color(0xffbfd0a6), // 배경색
                                               onPrimary: Color(0xffbfd0a6), // 텍스트 및 아이콘 색상
                                               side: BorderSide(color: Color(0xffbfd0a6)), // 테두리 색상 및 너비
-                                              minimumSize: Size(300, 64),
+                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 100, MediaQuery.of(context).size.width > 800 ? 64 : 32),
                                             ),
                                             child: Text('구매하기', style: TextStyle(
-                                                fontSize: 24,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 18,
                                                 color: Colors.white,
                                               )
                                             ),
                                           ),
-                                          SizedBox(width: 32),
+                                          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 16),
                                           ElevatedButton(
                                             onPressed: () {
                                               // Handle Check Review button click
@@ -1095,10 +1099,10 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               primary: Colors.white, // 배경색
                                               onPrimary: Colors.white, // 텍스트 및 아이콘 색상
                                               side: BorderSide(color: Color(0xffbfd0a6)), // 테두리 색상 및 너비
-                                              minimumSize: Size(300, 64),
+                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 100, MediaQuery.of(context).size.width > 800 ? 64 : 32),
                                             ),
                                             child: Text('리뷰확인', style: TextStyle(
-                                                fontSize: 24,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 18,
                                                 color: Color(0xffbfd0a6),
                                               )
                                             ),
@@ -1113,7 +1117,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ],
                         ),
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 16 : 8),
                       // Detail Images
                       if (productDetailPicUrls != null)
                         for (var detailPicUrl in productDetailPicUrls!)
@@ -1142,7 +1146,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           children: [
                             Expanded(
                               child: Text('Type', style: TextStyle(
-                                  fontSize: 32,
+                                  fontSize: MediaQuery.of(context).size.width > 800 ? 32 : 24,
                                   fontWeight: FontWeight.bold,
                                 )
                               ),
@@ -1150,7 +1154,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 24 : 20),
                       // Bottom Container
                       Container(
                         width: 1300,
@@ -1164,13 +1168,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   Row(
                                     children: [
                                       Text('그린워싱 유형', style: TextStyle(
-                                          fontSize: 25,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 22,
                                           color: Color(0xff1a5545),
                                           fontWeight: FontWeight.bold,
                                         )
                                       ),
                                       Text('이란?', style: TextStyle(
-                                          fontSize: 25,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 22,
                                         )
                                       ),
                                     ]
@@ -1179,109 +1183,134 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   Row(
                                     children: [
                                       Text('캐나다의 친환경 컨설팅 기업 ', style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                         )
                                       ),
                                       Text('테라초이스', style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                           color: Color(0xff1a5545),
                                         )
                                       ),
                                       Text('에서 발표한 그린워싱의 유형입니다.', style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                         )
                                       ),
                                     ]
                                   ),
                                   Text('그린리버에서는 총 7가지의 유형 중, 소비자가 직관적으로 판단할 수 있는', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   Text('4가지를 선정하여 제시하고 있습니다.', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
-                                  SizedBox(height: 50),
+                                  SizedBox(height: MediaQuery.of(context).size.width > 800 ? 50 : 35),
                                   Text('증거 불충분', style: TextStyle(
-                                      fontSize: 21,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('친환경 제품임을 증명할 인증 라벨이나 성분 등의 증거가', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   Text('제대로 마련되지 않은 경우입니다.', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('부적절한 인증 라벨', style: TextStyle(
-                                      fontSize: 21,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('공인된 인증 마크와 유사한 이미지를 부착하는 경우입니다.', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('애매모호한 주장', style: TextStyle(
-                                      fontSize: 21,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('뜻을 이해하기 어렵거나 오해를 불러 일으킬 수 있는 문구를 사용하는 경우입니다.', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('거짓말', style: TextStyle(
-                                      fontSize: 21,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('인증마크나 문구를 도용하여 사실이 아닌 부분을 광고하는 경우입니다.', style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                 ],
                               ),
                             ),
-                            Column(
-                              children: [
-                                SizedBox(height: 50),
-                                Container(
-                                  height: 650,
-                                  width: 0.08, // 세로선의 두께 설정
-                                  color: Color(0xFFDCDCDC), // 세로선의 색상 설정
-                                ),
-                              ]
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            if (MediaQuery.of(context).size.width > 800)
+                              Column(
                                 children: [
+                                  SizedBox(height: 50),
                                   Container(
-                                    height: 600,
-                                    width: double.infinity, // 세로선의 두께 설정
-                                    child: Center(
-                                      child: DonutChart()
-                                    )
-                                  )
-                                ],
+                                    height: 650,
+                                    width: 0.08, // 세로선의 두께 설정
+                                    color: Color(0xFFDCDCDC), // 세로선의 색상 설정
+                                  ),
+                                ]
                               ),
-                            ),
+                            if (MediaQuery.of(context).size.width > 800)
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: 600,
+                                      width: double.infinity, // 세로선의 두께 설정
+                                      child: Center(
+                                        child: DonutChart()
+                                      )
+                                    )
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 32),
+                      if (MediaQuery.of(context).size.width <= 800)
+                        Container(
+                          width: 1300,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: 600,
+                                      width: MediaQuery.of(context).size.width - 20, // 세로선의 두께 설정
+                                      child: Center(
+                                        child: DonutChart()
+                                      )
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ]
+                          )
+                        ),
+                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 24),
                       // Reviews
                       Container(
                         width: 1300,
@@ -1291,7 +1320,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                               child: Row(
                                 children: [
                                   Text('Review', style: TextStyle(
-                                      fontSize: 32,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 32 : 24,
                                       fontWeight: FontWeight.bold,
                                     )
                                   ),
@@ -1313,7 +1342,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 60),
+                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 60 : 40),
                       // Review List
                       // You can use productReviews to build a ListView of reviews
                       // Assuming productReviews is a List<dynamic>
@@ -1333,7 +1362,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                           // User Icon and Name
                                           CircleAvatar(
                                             // Assuming user icon is available in the review data
-                                            radius: 24.0,
+                                            radius: MediaQuery.of(context).size.width > 800 ? 24.0 : 22.0,
                                             backgroundImage: NetworkImage('https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png'),
                                             backgroundColor: Colors.white,
                                           ),
@@ -1343,7 +1372,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(productReviews[i]['name'], style: TextStyle(
-                                                  fontSize: 20,
+                                                  fontSize: MediaQuery.of(context).size.width > 800 ? 20 : 18,
                                                   fontWeight: FontWeight.bold,
                                                 )
                                               ),
@@ -1356,51 +1385,51 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                                   if (productReviews[i]['checklists'][0] == 1)
                                                     if (productReviews[i]['checklists'][1] == 0 && productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                       Text('증거 불충분', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                     else
                                                       Text('증거 불충분 | ', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                   ,if (productReviews[i]['checklists'][1] == 1)
                                                     if (productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                       Text('부적절한 인증 라벨', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                     else
                                                       Text('부적절한 인증 라벨 | ', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                   ,if (productReviews[i]['checklists'][2] == 1)
                                                     if (productReviews[i]['checklists'][3] == 0)
                                                       Text('애매모호한 주장', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                     else
                                                       Text('애매모호한 주장 | ', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                   ,if (productReviews[i]['checklists'][3] == 1)
                                                     Text('거짓말', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
                                                   ,if (productReviews[i]['checklists'][0] == 0 && productReviews[i]['checklists'][1] == 0 && productReviews[i]['checklists'][2] == 0 && productReviews[i]['checklists'][3] == 0)
                                                     Text('해당사항 없음', style: TextStyle(
-                                                          fontSize: 16,
+                                                          fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                                           color: Color(0xff1a5545),
                                                         )
                                                       )
@@ -1430,12 +1459,12 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 32),
+                                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 24),
                                       Row(
                                         children: [
-                                          SizedBox(width: 56),
+                                          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 56 : 52),
                                           Text('${productReviews[i]['content']}', style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 16,
                                             )
                                           )
                                         ]
@@ -1491,13 +1520,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                 primary: Color(0xff19583E), // 배경색
                                 onPrimary: Color(0xff19583E), // 텍스트 및 아이콘 색상
                                 side: BorderSide(color: Color(0xff19583E)), // 테두리 색상 및 너비
-                                minimumSize: Size(130, 58),
+                                minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 130 : 110, MediaQuery.of(context).size.width > 800 ? 58 : 54),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100.0), // 모서리를 둥글게 하는 정도를 지정
                                 ),
                               ),
                               child: Text('리뷰 작성', style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: MediaQuery.of(context).size.width > 800 ? 16 : 14,
                                   color: Colors.white,
                                 )
                               ),
@@ -1505,7 +1534,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                           ]
                         ),
                       ),
-                      SizedBox(height: 32),
+                      SizedBox(height: MediaQuery.of(context).size.width > 800 ? 32 : 24),
                     ],
                   );
                 }
@@ -1584,7 +1613,7 @@ class DonutChartState extends State<DonutChart> {
                     show: false,
                   ),
                   sectionsSpace: 1,
-                  centerSpaceRadius: 150,
+                  centerSpaceRadius: MediaQuery.of(context).size.width > 800 ? 150 : 100,
                   sections: showingSections(),
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
