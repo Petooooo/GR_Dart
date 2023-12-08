@@ -14,3 +14,5 @@
 /Server/ConversionServer/package-lock.json
 /Server/ConversionServer/env.json
 /Server/mysql
+/Server/WebServer/node_modules
+/Server/WebServer/package-lock.json
