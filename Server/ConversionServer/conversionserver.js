@@ -265,12 +265,32 @@ app.post("/review/write", (req, res) => {
 });
 
 // [API]     Product Review Delete API
-// [DELETE]  http://conversionserver:8082/review/delete?id=${review_id}&password=${password}
-// [Example] http://localhost:8082/review/delete?id=1&password=123
-// [cUrl]    curl -X DELETE "http://localhost:8082/review/delete?id=1&password=1234"
+// [DELETE]  http://conversionserver:8082/review/delete?product_id=${product_id}&review_id=${review_id}&password=${password}
+// [Example] http://localhost:8082/review/delete?product_id=13078030340&review_id=1&password=123
+// [cUrl]    curl -X DELETE "http://localhost:8082/review/delete?product_id=13078030340&review_id=13&password=123"
 app.delete("/review/delete", (req, res) => {
-    review_id = req.query.id;
+    product_id = req.query.product_id;
+    review_id = req.query.review_id;
     password = req.query.password;
+    detailURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/detail/content?id=" +
+            product_id
+    );
+    reviewLengthURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/review/length?id=" +
+            product_id
+    );
+    updateURL = encodeURI(
+        "http://" + envData.dbserver_host + ":" + envData.dbserver_port + "/update"
+    );
     reviewPasswordURL = encodeURI(
         "http://" +
             envData.dbserver_host +
@@ -287,24 +307,82 @@ app.delete("/review/delete", (req, res) => {
             "/review/delete?id=" +
             review_id
     );
+    reviewChecklistURL = encodeURI(
+        "http://" +
+            envData.dbserver_host +
+            ":" +
+            envData.dbserver_port +
+            "/review/checklist?id=" +
+            review_id
+    );
     request.get(
         {
-            url: reviewPasswordURL,
+            url: detailURL,
             method: "GET",
         },
         function (error1, response1, body1) {
-            if (password == JSON.parse(JSON.parse(body1)).password) {
-                request.delete(
-                    {
-                        url: reviewDeleteURL,
-                    },
-                    function (error2, response2, body2) {
-                        res.send(body2);
-                    }
-                );
-            } else {
-                res.send("WrongPassword");
-            }
+            old_checklists = JSON.parse(JSON.parse(JSON.parse(body1)).checklists);
+            request.get(
+                {
+                    url: reviewLengthURL,
+                    method: "GET",
+                },
+                function (error2, response2, body2) {
+                    new_length = JSON.parse(JSON.parse(body2)).length - 1;
+                    request.get(
+                        {
+                            url: reviewChecklistURL,
+                            method: "GET",
+                        },
+                        function (error3, response3, body3) {
+                            delChecklist = JSON.parse(body3);
+                            new_checklists = [
+                                old_checklists[0] - delChecklist.check_1,
+                                old_checklists[1] - delChecklist.check_2,
+                                old_checklists[2] - delChecklist.check_3,
+                                old_checklists[3] - delChecklist.check_4,
+                            ];
+                            request.get(
+                                {
+                                    url: reviewPasswordURL,
+                                    method: "GET",
+                                },
+                                function (error4, response4, body4) {
+                                    if (password == JSON.parse(JSON.parse(body4)).password) {
+                                        request.delete(
+                                            {
+                                                url: reviewDeleteURL,
+                                            },
+                                            function (error5, response5, body5) {
+                                                request.put(
+                                                    {
+                                                        uri: updateURL,
+                                                        method: "PUT",
+                                                        body: {
+                                                            id: product_id,
+                                                            check_1: new_checklists[0],
+                                                            check_2: new_checklists[1],
+                                                            check_3: new_checklists[2],
+                                                            check_4: new_checklists[3],
+                                                            reviewer: new_length,
+                                                        },
+                                                        json: true,
+                                                    },
+                                                    function (error6, response6, body6) {
+                                                        res.send("sucess");
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    } else {
+                                        res.send("WrongPassword");
+                                    }
+                                }
+                            );
+                        }
+                    );
+                }
+            );
         }
     );
 });

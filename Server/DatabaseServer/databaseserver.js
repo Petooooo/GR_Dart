@@ -328,11 +328,11 @@ app.get("/review/password", (request, response) => {
 });
 
 // [API]     Product Review Checklist API
-// [GET]     http://dbserver:8081/review/checklist?review_id=${review_id}
-// [Example] http://localhost:8081/review/checklist?review_id=20
-// [cUrl]    curl -X GET "http://localhost:8081/review/checklist?review_id=19"
+// [GET]     http://dbserver:8081/review/checklist?id=${review_id}
+// [Example] http://localhost:8081/review/checklist?id=20
+// [cUrl]    curl -X GET "http://localhost:8081/review/checklist?id=19"
 app.get("/review/checklist", (request, response) => {
-    id = request.query.review_id;
+    id = request.query.id;
     connection.query(
         "SELECT check_1,check_2,check_3,check_4 FROM reviewTable WHERE id = '" + id + "'",
         function (error, results, fields) {
