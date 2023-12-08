@@ -1645,38 +1645,53 @@ class DonutChartState extends State<DonutChart> {
       4,
       (i) {
         tempIndex = touchedIndex;
-        if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          tempIndex = touchedIndex + 1;
-        }
-        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          if (touchedIndex > 0) {
-            tempIndex = touchedIndex + 1;
+        // print(touchedIndex);
+        if (tempIndex != -1) {
+          if (context.read<GlobalStore>().checklists[0] == 0) {
+            tempIndex = tempIndex + 1;
+          }
+          if (context.read<GlobalStore>().checklists[1] == 0 & tempIndex > 0) {
+            tempIndex = tempIndex + 1;
+          }
+          if (context.read<GlobalStore>().checklists[2] == 0 & tempIndex > 1) {
+            tempIndex = tempIndex + 1;
+          }
+          if (context.read<GlobalStore>().checklists[3] == 0 & tempIndex > 2) {
+            tempIndex = tempIndex + 1;
           }
         }
-        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          if (touchedIndex > 1) {
-            tempIndex = touchedIndex +1;
-          }
-        }
-        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          tempIndex = touchedIndex + 2;
-        }
-        else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          if (touchedIndex > 0) {
-            tempIndex = touchedIndex + 2;
-          }
-        }
-        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          if (touchedIndex == 0) {
-            tempIndex = touchedIndex + 1;
-          }
-          else {
-            tempIndex = touchedIndex + 2;
-          }
-        }
-        else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
-          tempIndex = touchedIndex + 3;
-        }
+        // if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   tempIndex = touchedIndex + 1;
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   if (touchedIndex > 0) {
+        //     tempIndex = touchedIndex + 1;
+        //   }
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   if (touchedIndex > 1) {
+        //     tempIndex = touchedIndex +1;
+        //   }
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] != 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   tempIndex = touchedIndex + 2;
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] != 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   if (touchedIndex > 0) {
+        //     tempIndex = touchedIndex + 2;
+        //   }
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] != 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   if (touchedIndex == 0) {
+        //     tempIndex = touchedIndex + 1;
+        //   }
+        //   else {
+        //     tempIndex = touchedIndex + 2;
+        //   }
+        // }
+        // else if (context.read<GlobalStore>().checklists[0] == 0 && context.read<GlobalStore>().checklists[1] == 0 && context.read<GlobalStore>().checklists[2] == 0 && context.read<GlobalStore>().checklists[3] != 0) {
+        //   tempIndex = touchedIndex + 3;
+        // }
         final isTouched = i == tempIndex;
         if (i == 0 && context.read<GlobalStore>().checklists[0] != 0) {
           return PieChartSectionData(
