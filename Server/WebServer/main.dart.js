@@ -78088,13 +78088,13 @@ s=t.l
 if(A.Z(m,!1,s).w[0]===0)++n.e
 m=n.c
 m.toString
-A.Z(m,!1,s).toString
+if(A.Z(m,!1,s).w[1]===0&&n.e>0)++n.e
 m=n.c
 m.toString
-A.Z(m,!1,s).toString
+if(A.Z(m,!1,s).w[2]===0&&n.e>1)++n.e
 m=n.c
 m.toString
-A.Z(m,!1,s).toString}r=a===n.e
+if(A.Z(m,!1,s).w[3]===0&&n.e>2)++n.e}r=a===n.e
 if(a===0){m=n.c
 m.toString
 m=A.Z(m,!1,t.l).w[0]!==0}else m=!1
