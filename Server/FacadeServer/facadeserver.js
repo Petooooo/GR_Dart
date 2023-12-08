@@ -19,7 +19,7 @@ app.options("*", cors());
 
 // HTTP Server
 app.get("/", (request, response) => {
-    response.send(`<h1>Main Page</h1>`);
+  response.send(`<h1>Main Page</h1>`);
 });
 
 // [API]     Search API
@@ -27,30 +27,30 @@ app.get("/", (request, response) => {
 // [Example] http://localhost:8080/search?searchword=종이컵&page=1&size=5
 // [cUrl]    curl -X GET "http://localhost:8080/search?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5&page=1&size=5"
 app.get("/search", (req, res) => {
-    searchword = req.query.searchword;
-    page = req.query.page;
-    size = req.query.size;
-    detailURL = encodeURI(
-        "http://" +
-            envData.convserver_host +
-            ":" +
-            envData.convserver_port +
-            "/search?searchword=" +
-            searchword +
-            "&page=" +
-            page +
-            "&size=" +
-            size
-    );
-    request.get(
-        {
-            url: detailURL,
-            method: "GET",
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  searchword = req.query.searchword;
+  page = req.query.page;
+  size = req.query.size;
+  detailURL = encodeURI(
+    "http://" +
+      envData.convserver_host +
+      ":" +
+      envData.convserver_port +
+      "/search?searchword=" +
+      searchword +
+      "&page=" +
+      page +
+      "&size=" +
+      size
+  );
+  request.get(
+    {
+      url: detailURL,
+      method: "GET",
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // [API]     Detail API
@@ -58,19 +58,24 @@ app.get("/search", (req, res) => {
 // [Example] http://localhost:8080/detail?id=13078030340
 // [cUrl]    curl -X GET "http://localhost:8080/detail?id=13078030340"
 app.get("/detail", (req, res) => {
-    id = req.query.id;
-    detailURL = encodeURI(
-        "http://" + envData.convserver_host + ":" + envData.convserver_port + "/detail?id=" + id
-    );
-    request.get(
-        {
-            url: detailURL,
-            method: "GET",
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  id = req.query.id;
+  detailURL = encodeURI(
+    "http://" +
+      envData.convserver_host +
+      ":" +
+      envData.convserver_port +
+      "/detail?id=" +
+      id
+  );
+  request.get(
+    {
+      url: detailURL,
+      method: "GET",
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // [API]     Search Length API
@@ -78,24 +83,24 @@ app.get("/detail", (req, res) => {
 // [Example] http://localhost:8080/search/length?searchword=종이컵
 // [cUrl]    curl -X GET "http://localhost:8080/search/length?searchword=%EC%A2%85%EC%9D%B4%EC%BB%B5"
 app.get("/search/length", (req, res) => {
-    searchword = req.query.searchword;
-    lengthURL = encodeURI(
-        "http://" +
-            envData.convserver_host +
-            ":" +
-            envData.convserver_port +
-            "/search/length?searchword=" +
-            req.query.searchword
-    );
-    request.get(
-        {
-            url: lengthURL,
-            method: "GET",
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  searchword = req.query.searchword;
+  lengthURL = encodeURI(
+    "http://" +
+      envData.convserver_host +
+      ":" +
+      envData.convserver_port +
+      "/search/length?searchword=" +
+      req.query.searchword
+  );
+  request.get(
+    {
+      url: lengthURL,
+      method: "GET",
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // [API]     Review Content API
@@ -103,25 +108,25 @@ app.get("/search/length", (req, res) => {
 // [Example] http://localhost:8080/review/content?id=13078030340&page=1&size=5
 // [cUrl]    curl -X GET "http://localhost:8080/review/content?id=13078030340&page=1&size=5"
 app.get("/review/content", (req, res) => {
-    request.get(
-        {
-            url:
-                "http://" +
-                envData.dbserver_host +
-                ":" +
-                envData.dbserver_port +
-                "/review/content?id=" +
-                req.query.id +
-                "&page=" +
-                req.query.page +
-                "&size=" +
-                req.query.size,
-            method: "GET",
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  request.get(
+    {
+      url:
+        "http://" +
+        envData.dbserver_host +
+        ":" +
+        envData.dbserver_port +
+        "/review/content?id=" +
+        req.query.id +
+        "&page=" +
+        req.query.page +
+        "&size=" +
+        req.query.size,
+      method: "GET",
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // [API]     Review Write API
@@ -129,63 +134,69 @@ app.get("/review/content", (req, res) => {
 // [Example] http://localhost:8080/review/write
 // [cUrl]    curl -d '{"id":"13078030340","name":"John","password":"1234","checklists": [1, 1, 0, 1],"content":"This is bad product."}' -H "Content-Type: application/json" -X POST "http://localhost:8080/review/write"
 app.post("/review/write", (req, res) => {
-    product_id = req.body.id;
-    user_name = req.body.name;
-    user_password = req.body.password;
-    checklists = req.body.checklists;
-    content = req.body.content;
-    reviewWriteURL = encodeURI(
-        "http://" + envData.convserver_host + ":" + envData.convserver_port + "/review/write"
-    );
-    request.post(
-        {
-            uri: reviewWriteURL,
-            method: "POST",
-            body: {
-                id: product_id,
-                name: user_name,
-                password: user_password,
-                checklists: checklists,
-                content: content,
-            },
-            json: true,
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  product_id = req.body.id;
+  user_name = req.body.name;
+  user_password = req.body.password;
+  checklists = req.body.checklists;
+  content = req.body.content;
+  reviewWriteURL = encodeURI(
+    "http://" +
+      envData.convserver_host +
+      ":" +
+      envData.convserver_port +
+      "/review/write"
+  );
+  request.post(
+    {
+      uri: reviewWriteURL,
+      method: "POST",
+      body: {
+        id: product_id,
+        name: user_name,
+        password: user_password,
+        checklists: checklists,
+        content: content,
+      },
+      json: true,
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // [API]     Review Delete API
-// [DELETE]  http://facadeserver:8080/review/delete?id=${review_id}&password=${password}
-// [Example] http://localhost:8080/review/delete?id=1&password=1234
-// [cUrl]    curl -X DELETE "http://localhost:8080/review/delete?id=1&password=1234"
+// [DELETE]  http://facadeserver:8080/review/delete?product_id=${product_id}&review_id=${review_id}&password=${password}
+// [Example] http://localhost:8080/review/deletedelete?product_id=13078030340&review_id=1&password=123
+// [cUrl]    curl -X DELETE "http://localhost:8080/review/delete?product_id=13078030340&review_id=1&password=123"
 app.delete("/review/delete", (req, res) => {
-    request.delete(
-        {
-            url:
-                "http://" +
-                envData.convserver_host +
-                ":" +
-                envData.convserver_port +
-                "/review/delete?id=" +
-                req.query.id +
-                "&password=" +
-                req.query.password,
-            method: "DELETE",
-        },
-        function (error, response, body) {
-            res.send(body);
-        }
-    );
+  request.delete(
+    {
+      url:
+        "http://" +
+        envData.convserver_host +
+        ":" +
+        envData.convserver_port +
+        "/review/delete?product_id=" +
+        req.query.product_id +
+        "&review_id=" +
+        req.query.review_id +
+        "&password=" +
+        req.query.password,
+      method: "DELETE",
+    },
+    function (error, response, body) {
+      res.send(body);
+    }
+  );
 });
 
 // 404 Error Handler
 app.use(function (req, res, next) {
-    res.status(404).send("404 Error: Page Not Found");
+  res.status(404).send("404 Error: Page Not Found");
 });
 
 // Start Server on Port ${portnum}
 app.listen(portnum, () => {
-    console.log("Listening on " + portnum);
+  console.log("Listening on " + portnum);
 });
