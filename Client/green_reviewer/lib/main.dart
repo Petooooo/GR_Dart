@@ -73,13 +73,14 @@ class _WholeScreenState extends State<WholeScreen> {
   }
 
   Future<bool> deleteRequest() async {
-    final url = 'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/review/delete?id=${context.read<GlobalStore>().review_id}&password=${passwordController.text}';
+    final url = 'http://ec2-3-38-236-34.ap-northeast-2.compute.amazonaws.com:8080/review/delete?product_id=${context.read<GlobalStore>().detail_id}&review_id=${context.read<GlobalStore>().review_id}&password=${passwordController.text}';
     // print(url);
     try {
       final response = await http.delete(
         Uri.parse(url),
       );
-      if (response.body == 'success')
+      // print(response.body);
+      if (response.body == 'sucess')
         return true;
       return false;
       // Handle the response
@@ -625,6 +626,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> with ChangeNotifier {
   Widget build(BuildContext context) {
     return Container(
       width: 2000,
+      height: 65,
       child: Row(
         children: [
           SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 24),
