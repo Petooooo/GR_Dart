@@ -1650,13 +1650,13 @@ class DonutChartState extends State<DonutChart> {
           if (context.read<GlobalStore>().checklists[0] == 0) {
             tempIndex = tempIndex + 1;
           }
-          if (context.read<GlobalStore>().checklists[1] == 0 & tempIndex > 0) {
+          if (context.read<GlobalStore>().checklists[1] == 0 && tempIndex > 0) {
             tempIndex = tempIndex + 1;
           }
-          if (context.read<GlobalStore>().checklists[2] == 0 & tempIndex > 1) {
+          if (context.read<GlobalStore>().checklists[2] == 0 && tempIndex > 1) {
             tempIndex = tempIndex + 1;
           }
-          if (context.read<GlobalStore>().checklists[3] == 0 & tempIndex > 2) {
+          if (context.read<GlobalStore>().checklists[3] == 0 && tempIndex > 2) {
             tempIndex = tempIndex + 1;
           }
         }
