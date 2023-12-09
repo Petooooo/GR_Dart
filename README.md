@@ -155,6 +155,92 @@ flutter run -d chrome
 4. Push to your own Gibhub repository (git push origin feature/name)
 5. Create a pull request
 
+## Used Libraries
+
+**http**
+
+> https://pub.dev/packages/http
+>
+> Copyright 2014 the Dart project authors
+>
+> BSD-3-Clause
+
+**cupertino_icons**
+
+> https://pub.dev/packages/cupertino_icons
+>
+> Copyright 2016 Vladimir Kharlampidi
+>
+> MIT License
+
+**provider**
+
+> https://pub.dev/packages/provider
+>
+> Copyright 2019 Remi Rousselet
+>
+> MIT License
+
+**fl_chart**
+
+> https://pub.dev/packages/fl_chart
+>
+> Copyright 2022 Flutter 4 Fun
+>
+> MIT License
+
+**url_launcher**
+
+> https://pub.dev/packages/url_launcher
+>
+> Copyright 2013 The Flutter Authors
+>
+> BSD-3-Clause
+
+**express**
+
+> https://github.com/expressjs/express
+>
+> Copyright 2009-2014 TJ Holowaychuk
+> Copyright 2013-2014 Roman Shtylman
+> Copyright 2014-2015 Douglas Christopher Wilson
+>
+> MIT License
+
+**body-parser**
+
+> https://github.com/expressjs/body-parser
+>
+> Copyright 2014 Jonathan Ong
+> Copyright 2014-2015 Douglas Christopher Wilson
+>
+> MIT License
+
+**cors**
+
+> https://github.com/expressjs/cors
+>
+> Copyright 2013 Troy Goode
+>
+> MIT License
+
+**selenium**
+
+> https://github.com/SeleniumHQ/selenium
+>
+> Copyright 2011-2022 Software Freedom Conservancy
+> Copyright 2004-2011 Selenium committers
+>
+> Apache-2.0 license
+
+**pymysql**
+
+> https://github.com/PyMySQL/PyMySQL
+>
+> Copyright 2010-2013 PyMySQL contributors
+>
+> MIT License
+
 ## Contact
 
 -   박지환: peto@khu.ac.kr
