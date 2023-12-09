@@ -1,5 +1,7 @@
-[<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">](https://nodejs.org/ko/)
-[<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white">](https://expressjs.com/ko/)
+[<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">](https://nodejs.org/)
+[<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white">](https://expressjs.com/)
+[<img src="https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white">](https://dart.dev/)
+[<img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white">](https://flutter.dev)
 
 # 그린리버 (Green Reviewer)
 
@@ -19,8 +21,10 @@
 
 ### Built With
 
--   [Node.js](https://nodejs.org/ko/)
--   [Express](https://expressjs.com/ko/)
+-   [Node.js](https://nodejs.org/)
+-   [Express](https://expressjs.com/)
+-   [Dart](https://dart.dev/)
+-   [Flutter](https://flutter.dev)
 
 ## Getting Started
 
@@ -135,7 +139,7 @@ flutter run -d chrome
 
 ### Web Service
 
--   Click the **[link](http://client.green-reviewer.kor.kr/)**(client.green-reviewer.kor.kr)
+-   Click the **[link](http://client.green-reviewer.kro.kr)**(client.green-reviewer.kro.kr)
 
 ### Mobile Service
 
@@ -154,5 +158,3 @@ flutter run -d chrome
 ## Contact
 
 -   박지환: peto@khu.ac.kr
-
-    **[Project Link](https://github.com/Petooooo/GR_Dart.git)**
