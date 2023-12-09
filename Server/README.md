@@ -1,5 +1,3 @@
-# Client
-
 # Server
 
 ## Facade Server API
@@ -175,13 +173,14 @@ success
 #### 3) Review Delete API [DELETE]
 
 <aside>
-📌 http://facadeserver:8080/review/delete?id=${review_id}&password=${password}
+📌 http://facadeserver:8080/review/delete?product_id=${product_id}&review_id=${review_id}&password=${password}
 
 </aside>
 
 -   Request
 
 ```
+- 제품 id
 - 리뷰 id
 - 리뷰 작성시 비밀번호
 ```
@@ -330,13 +329,14 @@ success
 #### 2) Product Review Delete API [DELETE]
 
 <aside>
-📌 http://conversionserver:8082/review/delete?id=${review_id}&password=${password}
+📌 http://conversionserver:8082/review/delete?product_id=${product_id}&review_id=${review_id}&password=${password}
 
 </aside>
 
 -   Request
 
 ```
+- 제품 id
 - 리뷰 id
 - 리뷰 작성시 비밀번호
 ```
@@ -628,7 +628,31 @@ success
 }
 ```
 
-#### 4) Product Review Write API [POST]
+#### 4) Product Review Checklist API [GET]
+
+<aside>
+📌 http://dbserver:8081/review/checklist?id=${review_id}
+
+</aside>
+
+-   Request
+
+```
+- 리뷰 id
+```
+
+-   Response
+
+```
+{
+    check_1: 1,
+    check_2: 1,
+    check_3: 0,
+    check_4: 1
+}
+```
+
+#### 5) Product Review Write API [POST]
 
 <aside>
 📌 http://dbserver:8081/review/write
@@ -667,7 +691,7 @@ success
 success
 ```
 
-#### 5) Product Review Delete API [DELETE]
+#### 6) Product Review Delete API [DELETE]
 
 <aside>
 📌 http://dbserver:8081/review/delete?id=${review_id}
@@ -690,9 +714,9 @@ success
 
 ```
 1. 증거 불충분
-2. 애매모호한 주장
-3. 거짓말
-4. 부적절한 인증 라벨
+2. 부적절한 인증 라벨
+3. 애매모호한 주장
+4. 거짓말
 ```
 
 ## 5. Exception Handler
