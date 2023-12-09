@@ -34,28 +34,26 @@
 
 ### 1. Search Page
 
-#### 1) Search & View Products
-
-![app_1](https://github.com/Petooooo/GR_Dart/assets/87960694/bb87a291-6242-450a-9629-377891b75c68)
+<img width="920" alt="app_1" src="https://github.com/Petooooo/GR_Dart/assets/87960694/bb87a291-6242-450a-9629-377891b75c68">
 
 #### 2) Pagenation
 
-![app_2](https://github.com/Petooooo/GR_Dart/assets/87960694/cfa69579-83a1-42fc-963e-93274a2cae1a)
+<img width="920" alt="app_2" src="https://github.com/Petooooo/GR_Dart/assets/87960694/cfa69579-83a1-42fc-963e-93274a2cae1a">
 
 ### 2. Detail Page
 
 #### 1) Detail View
 
-![app_3](https://github.com/Petooooo/GR_Dart/assets/87960694/ff3a0359-8d19-431d-8ed1-d5ff3dc60c7f)
+<img width="920" alt="app_3" src="https://github.com/Petooooo/GR_Dart/assets/87960694/ff3a0359-8d19-431d-8ed1-d5ff3dc60c7f">
 
 #### 2) Type & Graph
 
-![app_4](https://github.com/Petooooo/GR_Dart/assets/87960694/a60f70e6-2799-440d-87cd-4a789d7d6716)
+<img width="920" alt="app_4" src="https://github.com/Petooooo/GR_Dart/assets/87960694/a60f70e6-2799-440d-87cd-4a789d7d6716">
 
 #### 3) Review Write
 
-![app_5](https://github.com/Petooooo/GR_Dart/assets/87960694/9fb88fe3-3468-4c20-a35c-155d29f805c9)
+<img width="920" alt="app_5" src="https://github.com/Petooooo/GR_Dart/assets/87960694/9fb88fe3-3468-4c20-a35c-155d29f805c9">
 
 #### 4) Review Delete
 
-![app_6](https://github.com/Petooooo/GR_Dart/assets/87960694/29970041-622a-4719-9ccb-635b37807d9b)
+<img width="920" alt="app_6" src="https://github.com/Petooooo/GR_Dart/assets/87960694/29970041-622a-4719-9ccb-635b37807d9b">
