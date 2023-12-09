@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
@@ -20,6 +21,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.white,
@@ -110,6 +112,7 @@ class _WholeScreenState extends State<WholeScreen> {
             children: [
               SearchBarWidget(
                 onSearchResultUpdate: () {
+                  setState(() {});
                   if (!context.read<GlobalStore>().isDialogOpen) {
                     if (context.read<GlobalStore>()._pageChangeDetect == true) {
                       _scrollController.jumpTo(0.0);
@@ -128,6 +131,7 @@ class _WholeScreenState extends State<WholeScreen> {
                   pageItemNumber: 10,
                   scrollController: _scrollController,
                   onPageUpdate: () {
+                    setState(() {});
                     if (!context.read<GlobalStore>().goReview) {
                       if (!context.read<GlobalStore>().isDialogOpen) {
                         if (context.read<GlobalStore>()._pageChangeDetect == true) {
@@ -442,7 +446,7 @@ class _DialogContainerState extends State<DialogContainer> {
           Center(
             child: Container(
               width: 450,
-              height: 200,
+              height: 210,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(70.0),
                 color: Colors.white,
@@ -795,6 +799,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
 
                     }
                     else {
+                      _hoveredIndex = index;
                       Provider.of<GlobalStore>(context, listen: false)._isDetail = true;
                       Provider.of<GlobalStore>(context, listen: false)._pageChangeDetect = true;
                       Provider.of<GlobalStore>(context, listen: false).detailID = context.read<GlobalStore>().products[(context.read<GlobalStore>().currentPage - 1) * 8 + _hoveredIndex].productID;
@@ -1029,7 +1034,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(productName, style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 45 : 22,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 45 : 18,
                                         )
                                       ),
                                       Text(productVendor, style: TextStyle(
@@ -1080,15 +1085,15 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               primary: Color(0xffbfd0a6), // 배경색
                                               onPrimary: Color(0xffbfd0a6), // 텍스트 및 아이콘 색상
                                               side: BorderSide(color: Color(0xffbfd0a6)), // 테두리 색상 및 너비
-                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 100, MediaQuery.of(context).size.width > 800 ? 64 : 32),
+                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 40, MediaQuery.of(context).size.width > 800 ? 64 : 32),
                                             ),
                                             child: Text('구매하기', style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 18,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 13,
                                                 color: Colors.white,
                                               )
                                             ),
                                           ),
-                                          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 16),
+                                          SizedBox(width: MediaQuery.of(context).size.width > 800 ? 32 : 5),
                                           ElevatedButton(
                                             onPressed: () {
                                               // Handle Check Review button click
@@ -1101,10 +1106,10 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                               primary: Colors.white, // 배경색
                                               onPrimary: Colors.white, // 텍스트 및 아이콘 색상
                                               side: BorderSide(color: Color(0xffbfd0a6)), // 테두리 색상 및 너비
-                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 100, MediaQuery.of(context).size.width > 800 ? 64 : 32),
+                                              minimumSize: Size(MediaQuery.of(context).size.width > 800 ? 300 : 40, MediaQuery.of(context).size.width > 800 ? 64 : 32),
                                             ),
                                             child: Text('리뷰확인', style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 18,
+                                                fontSize: MediaQuery.of(context).size.width > 800 ? 24 : 13,
                                                 color: Color(0xffbfd0a6),
                                               )
                                             ),
@@ -1170,13 +1175,13 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   Row(
                                     children: [
                                       Text('그린워싱 유형', style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 22,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 21,
                                           color: Color(0xff1a5545),
                                           fontWeight: FontWeight.bold,
                                         )
                                       ),
                                       Text('이란?', style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 22,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 25 : 21,
                                         )
                                       ),
                                     ]
@@ -1185,74 +1190,74 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   Row(
                                     children: [
                                       Text('캐나다의 친환경 컨설팅 기업 ', style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                         )
                                       ),
                                       Text('테라초이스', style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                           color: Color(0xff1a5545),
                                         )
                                       ),
                                       Text('에서 발표한 그린워싱의 유형입니다.', style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                          fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                         )
                                       ),
                                     ]
                                   ),
                                   Text('그린리버에서는 총 7가지의 유형 중, 소비자가 직관적으로 판단할 수 있는', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   Text('4가지를 선정하여 제시하고 있습니다.', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
-                                  SizedBox(height: MediaQuery.of(context).size.width > 800 ? 50 : 35),
+                                  SizedBox(height: MediaQuery.of(context).size.width > 800 ? 50 : 31),
                                   Text('증거 불충분', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 14,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('친환경 제품임을 증명할 인증 라벨이나 성분 등의 증거가', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   Text('제대로 마련되지 않은 경우입니다.', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('부적절한 인증 라벨', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 14,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('공인된 인증 마크와 유사한 이미지를 부착하는 경우입니다.', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('애매모호한 주장', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 14,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('뜻을 이해하기 어렵거나 오해를 불러 일으킬 수 있는 문구를 사용하는 경우입니다.', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   SizedBox(height: 25),
                                   Text('거짓말', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 18,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 21 : 14,
                                       color: Color(0xff1a5545),
                                     )
                                   ),
                                   SizedBox(height: 7),
                                   Text('인증마크나 문구를 도용하여 사실이 아닌 부분을 광고하는 경우입니다.', style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 15,
+                                      fontSize: MediaQuery.of(context).size.width > 800 ? 18 : 11,
                                     )
                                   ),
                                   SizedBox(height: 25),
@@ -1300,7 +1305,7 @@ class _ProductListState extends State<ProductList> with ChangeNotifier {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                      height: 600,
+                                      height: 450,
                                       width: MediaQuery.of(context).size.width - 20, // 세로선의 두께 설정
                                       child: Center(
                                         child: DonutChart()
@@ -1576,35 +1581,36 @@ class DonutChartState extends State<DonutChart> {
                 color: Color(0xFFe9ec85), // 대체 색상 값
                 text: '증거 불충분',
                 isSquare: true,
-                size: tempIndex == 0 ? 11 : 10,
+                size: tempIndex == 0 ? (MediaQuery.of(context).size.width > 800 ? 11 : 9) : (MediaQuery.of(context).size.width > 800 ? 10 : 8),
                 textColor: tempIndex == 0 ? Colors.black : Colors.grey,
               ),
               Indicator(
                 color: Color(0xFF7cc9af), // 대체 색상 값
                 text: '부적절한 인증 라벨',
                 isSquare: true,
-                size: tempIndex == 1 ? 11 : 10,
+                size: tempIndex == 1 ? (MediaQuery.of(context).size.width > 800 ? 11 : 9) : (MediaQuery.of(context).size.width > 800 ? 10 : 8),
                 textColor: tempIndex == 1 ? Colors.black : Colors.grey,
               ),
               Indicator(
                 color: Color(0xFFfeb59c), // 대체 색상 값
                 text: '애매모호한 주장',
                 isSquare: true,
-                size: tempIndex == 2 ? 11 : 10,
+                size: tempIndex == 2 ? (MediaQuery.of(context).size.width > 800 ? 11 : 9) : (MediaQuery.of(context).size.width > 800 ? 10 : 8),
                 textColor: tempIndex == 2 ? Colors.black : Colors.grey,
               ),
               Indicator(
                 color: Color(0xFF9e9ac9), // 대체 색상 값
                 text: '거짓말',
                 isSquare: true,
-                size: tempIndex == 3 ? 11 : 10,
+                size: tempIndex == 3 ? (MediaQuery.of(context).size.width > 800 ? 11 : 9) : (MediaQuery.of(context).size.width > 800 ? 10 : 8),
                 textColor: tempIndex == 3 ? Colors.black : Colors.grey,
               ),
             ],
           ),
-          const SizedBox(
-            height: 70,
-          ),
+          if (MediaQuery.of(context).size.width > 800)
+            const SizedBox(
+              height: 70,
+            ),
           Expanded(
             child: AspectRatio(
               aspectRatio: 1,
@@ -1615,7 +1621,7 @@ class DonutChartState extends State<DonutChart> {
                     show: false,
                   ),
                   sectionsSpace: 1,
-                  centerSpaceRadius: MediaQuery.of(context).size.width > 800 ? 150 : 100,
+                  centerSpaceRadius: MediaQuery.of(context).size.width > 800 ? 150 : 70,
                   sections: showingSections(),
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
@@ -1697,12 +1703,12 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xffFAFA4A) : Color(0xFFe9ec85), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[0],
-            title: isTouched ? context.read<GlobalStore>().checklists[0].toString() : '',
+            title: isTouched ? context.read<GlobalStore>().checklists[0].round().toString() : '',
             titleStyle: TextStyle(
               fontSize: 25,
               color: Colors.grey,
             ),
-            radius: 140,
+            radius: MediaQuery.of(context).size.width > 800 ? 140 : 110,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
                 ? const BorderSide(
@@ -1714,12 +1720,12 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xff4dd7a4) : Color(0xFF7cc9af), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[1],
-            title: isTouched ? context.read<GlobalStore>().checklists[1].toString() : '',
+            title: isTouched ? context.read<GlobalStore>().checklists[1].round().toString() : '',
             titleStyle: TextStyle(
               fontSize: 25,
               color: Color(0xffFFFFFF),
             ),
-            radius: 140,
+            radius: MediaQuery.of(context).size.width > 800 ? 140 : 110,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
                 ? const BorderSide(
@@ -1731,12 +1737,12 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xfffe9772) : Color(0xFFfeb59c), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[2],
-            title: isTouched ? context.read<GlobalStore>().checklists[2].toString() : '',
+            title: isTouched ? context.read<GlobalStore>().checklists[2].round().toString() : '',
             titleStyle: TextStyle(
               fontSize: 25,
               color: Color(0xffFFFFFF),
             ),
-            radius: 140,
+            radius: MediaQuery.of(context).size.width > 800 ? 140 : 110,
             titlePositionPercentageOffset: 0.6,
             borderSide: isTouched
                 ? const BorderSide(
@@ -1748,12 +1754,12 @@ class DonutChartState extends State<DonutChart> {
           return PieChartSectionData(
             color: isTouched ? Color(0xff8274cb) : Color(0xFF9e9ac9), // 대체 색상 값
             value: context.read<GlobalStore>().checklists[3],
-            title: isTouched ? context.read<GlobalStore>().checklists[3].toString() : '',
+            title: isTouched ? context.read<GlobalStore>().checklists[3].round().toString() : '',
             titleStyle: TextStyle(
               fontSize: 25,
               color: Color(0xffFFFFFF),
             ),
-            radius: 140,
+            radius: MediaQuery.of(context).size.width > 800 ? 140 : 110,
             titlePositionPercentageOffset: 0.55,
             borderSide: isTouched
                 ? const BorderSide(
@@ -1943,13 +1949,13 @@ class Indicator extends StatelessWidget {
   final bool isSquare;
   final double size;
   final Color? textColor;
-
+  
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
         Container(
-          width: size * 4,
+          width: MediaQuery.of(context).size.width > 800 ? size * 4 : size * 2,
           height: size * 1,
           decoration: BoxDecoration(
             shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
@@ -1962,7 +1968,7 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: MediaQuery.of(context).size.width > 800 ? 13 : 11,
             fontWeight: FontWeight.normal,
             color: textColor,
           ),
