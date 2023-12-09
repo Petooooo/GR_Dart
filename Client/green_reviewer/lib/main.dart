@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
+      title: '그린리버',
       home: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
