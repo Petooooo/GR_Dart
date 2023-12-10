@@ -2,7 +2,7 @@
 [<img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white">](https://flutter.dev)
 [<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">](https://nodejs.org)
 [<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white">](https://expressjs.com)
-[<img src="hhttps://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54">](https://www.python.org)
+[<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54">](https://www.python.org)
 
 # 그린리버 (Green Reviewer)
 
