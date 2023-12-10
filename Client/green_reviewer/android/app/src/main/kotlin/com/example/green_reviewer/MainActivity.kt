@@ -1,4 +1,4 @@
-package com.example.green_reviewer
+package com.grandstudio.green_reviewer
 
 import io.flutter.embedding.android.FlutterActivity
 
