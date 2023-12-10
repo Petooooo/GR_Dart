@@ -1,11 +1,11 @@
+[<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white">](https://www.docker.com)
+[<img src="https://img.shields.io/badge/Amazon%20AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white">](https://aws.amazon.com/)
+
 [<img src="https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white">](https://dart.dev)
 [<img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white">](https://flutter.dev)
 [<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">](https://nodejs.org)
 [<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white">](https://expressjs.com)
 [<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54">](https://www.python.org)
-
-[<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white">](https://www.docker.com)
-[<img src="https://img.shields.io/badge/Amazon%20AWS-232F3E?style=flat-square&logo=amazonaws&logoColor=white">](https://aws.amazon.com/)
 
 # 그린리버 (Green Reviewer)
 
